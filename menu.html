@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="estilos_menu.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap" rel="stylesheet">
     <title>Document</title>
 </head>
 <body>
@@ -35,38 +35,90 @@
             <div id="hms">00:00:00</div>
     </div>
 
-    <div id="buttons">
-        <button id="unav" onclick="unav()">Unavailable</button>
-        <button id="ava" onclick="ava()">Available</button>
-        <button id="lunch" onclick="lunch()">Lunch</button>
-        <button id="break" onclick="break1()">Break</button>
-        <button id="meet" onclick="meet()">Team Meeting</button>
-        <button id="coach" onclick="coach()">Coaching</button>
+    <div id="contbtn">
+        <div id="buttons">
+            <button class="btns" id="unav" >notavailable</button>
+            <button class="btns" id="ava" >Available</button>
+            <button class="btns" id="lunch" >Lunch</button>
+            <button class="btns" id="break" >Break</button>
+            <button class="btns" id="meet" >Team Meeting</button>
+            <button class="btns" id="coach" >Coaching</button>
+        </div>
     </div>
+    
+
+    <div id="mymodal" class="modalcont">
+        <div id="modal-cont">
+            <div id="contm">
+                <h2>¿Desea Cambiar de estado?</h2>
+                <button class="conf" id="confirm">Confirmar</button>
+                <button class="conf" id="cancel" >cancelar</button>
+            </div>
+        </div>
+    </div>
+
         <script>
-            function ava(){
-                document.getElementById('demo').innerHTML="Available";
-                document.getElementById('demo').style.color="aquamarine";
-            }function unav(){
-                document.getElementById('demo').innerHTML="Unavailable";
-                document.getElementById('demo').style.color="gray";
-            }function meet(){
-                document.getElementById('demo').innerHTML="Team Meeting";
-                document.getElementById('demo').style.color="green";
-            }function lunch(){
-                document.getElementById('demo').innerHTML="Lunch";
-                document.getElementById('demo').style.color="blue";
-            }function break1(){
-                document.getElementById('demo').innerHTML="break";
-                document.getElementById('demo').style.color="yellow";
-            }function coach(){
-                document.getElementById('demo').innerHTML="coach";
-                document.getElementById('demo').style.color="purple";
+
+            function modal(){
+                var modal = document.getElementById("mymodal");
+			    var body = document.getElementsByTagName("body")[0];
+                var span =document.getElementById('confirm');
+                modal.style.display = "block";
+				body.style.position = "static";
+				body.style.height = "100%";
+				body.style.overflow = "hidden";
+
+                span.onclick = function() {
+                    modal.style.display = "none";
+                    body.style.position = "inherit";
+                    body.style.height = "auto";
+                    body.style.overflow = "visible";
+                }
             }
-
-
             window.onload = init;
             function init(){
+
+            const btt=document.querySelectorAll('.btns');
+            const confi=document.querySelectorAll('.conf');
+            for(var i=0;i<btt.length;i++){
+                btt[i].addEventListener("click",function(){
+                    var idbtns=this.id;
+                    modal();
+                    for(var j=0;j<confi.length;j++){
+                        confi[j].addEventListener("click",function(){
+                            var idconf=this.id;
+                            if(idbtns=="ava" && idconf=="confirm"){   
+                                document.getElementById('demo').style.color="aquamarine";
+                                document.getElementById('demo').innerHTML="Available";
+                                for(var i=0;i<btt.length;i++){
+                                    if(btt[i]=="lunch"){
+                                        document.getElementById(btt[i]).disabled=true;
+                                    }else{
+                                        document.getElementById(btt[i]).disabled=false;
+                                    }
+                                }
+                            }else if(idbtns=="unav" && idconf=="confirm"){
+                                document.getElementById('demo').style.color="red";
+                                document.getElementById('demo').innerHTML="NotAvailable";
+                                document.getElementById('ava').disabled=false;
+                                document.getElementById('unav').disabled=true;
+                            }else if(idbtns=="lunch" && idconf=="confirm"){
+                                document.getElementById('demo').style.color="purple";
+                                document.getElementById('demo').innerHTML="Lunch";
+                            }else if(idbtns=="break" && idconf=="confirm"){
+                                document.getElementById('demo').style.color="yellow";
+                                document.getElementById('demo').innerHTML="Break";
+                            }else if(idbtns=="meet" && idconf=="confirm"){
+                                document.getElementById('demo').style.color="green";
+                                document.getElementById('demo').innerHTML="Team Meeting";
+                            }else if(idbtns=="coach" && idconf=="confirm"){
+                                document.getElementById('demo').style.color="orange";
+                                document.getElementById('demo').innerHTML="Coaching";
+                            }  
+                        })
+                    }
+                })
+            }
             h = 0;
             m = 0;
             s = 0;

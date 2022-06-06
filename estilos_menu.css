@@ -1,25 +1,29 @@
+/*Contenido de la pagina*/
 *{
     margin: 0;
     padding: 0;
-    font-family: 'Kdam Thmor Pro', sans-serif;
+    font-family: 'Rubik', sans-serif;
+    background-size: 100%;
+    background-repeat: no-repeat;
 }
+/*Barra de menu  y contenido desplegable*/
 ul{
     list-style-type: none;
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background: rgba(255, 120, 0, 0.7);
+    background: #161F26;
 }
 li {
     float: left;
 }
 li a, .dropbtn {
     display: inline-block;
-    color: #000;
+    color: white;
     padding: 14px 16px;
     text-decoration: none;
     text-align: center;
-    background: rgba(255, 255,255, 0);
+    background: #161F26;
 }
 li a:hover, .dropdown:hover .dropbtn {
     background-color: #585858;
@@ -52,6 +56,7 @@ li.dropdown {
     .dropdown:hover .dropdown-content {
     display: block;
 }
+/*Cronometro*/
 .cronometro{
     width:200px;
     height:100px;
@@ -67,16 +72,19 @@ li.dropdown {
     height:68px;
     padding:5px 0;
     font-size:50px;
-    color:#000;
-    font-family: alarm;  
+    color:#000; 
     background: rgba(255, 255,255, 0);
  }
+ /*Cuadro de estados*/
  #demo{
-     color: black;
+
      line-height: 11vw;
      font-size: 5vw;
      width: 60vw;height: 12vw;
      background: rgba(125, 125, 125, 0.3);
+     border-radius: 5px;
+     /*-webkit-text-stroke-width: 0.5px;
+     -webkit-text-stroke-color: black;*/
  }
  #state{
      align-items: center;
@@ -85,29 +93,42 @@ li.dropdown {
      text-align: center;
      background: rgba(255, 255,255, 0);
  }
+ /*Botones de estado*/
+ #contbtn{
+     width: 100vw;
+     height: 20vw;
+     background: #223440;
+     margin-top: 8.65vw;
+ }
  #buttons{
      width: 74vw;height: 10vw;
-     position: relative;top: 8vw;left: 13vw;
+     position: relative;top: 5vw;left: 13vw;
      display: flex;
+     background: rgba(255, 255, 255,0);
  }
  #buttons button{
      width: 10vw;height: 5vw;
      margin-left: 2vw;
      margin-top: 2vw;
-     background: rgba(255, 120, 0, 1);
+     background: rgba(255, 120, 0, 0.9);
+     border-radius: 10px;
+     border: none;
+     font-size: 1.3vw;
  }
  #buttons button:hover{
     transform: scale(1.2);
     cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
  }
  #unav:hover{
-    background: gray;
+    background: red;
  }
  #ava:hover{
      background: aquamarine;
  }
  #lunch:hover{
-     background-color: blue;
+     background-color: rgb(102, 102, 231);
  }
  #break:hover{
      background: yellow;
@@ -118,4 +139,50 @@ li.dropdown {
  #coach:hover{
      background: orange;
  }
+ /*Modal de Confirmación*/
+ .modalcont{
+    display: none; 
+    position: fixed; 
+    z-index: 1;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+    min-width: 800px;
+ }
+ .modalcont .modal-cont{
+     background: orange;
+     margin: auto;
+     padding: 20px;
+     border: 1px solid lightgray;
+     border-top: 10px solid black;
+     width: 60%;
+ }
+ .modalContainer .close:hover,
+ .modalContainer .close:focus {
+	color: #000;
+    text-decoration: none;
+	cursor: pointer;
+}
+#contm{
+    width: 30vw;height: 15vw;
+    background: orange;
+    position: relative;top: 5.8vw;left: 35vw;
+    border-radius: 5px;
+}
+#contm h2{
+    position: relative;top: 4.5vw;left: 4vw;
+}
+#contm button{
+    width: 5vw;height: 2vw;
+    display: inline-block;
+    position: relative;top: 6vw;left: 10vw;
+    border: none; border-radius: 5px;
+}
+
+
     
