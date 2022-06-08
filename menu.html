@@ -22,7 +22,7 @@
             <a href="#">Servicio 03</a>
             </div>
             </li>
-            <li style="float:right"><a href="#about">Acerca de</a></li>
+            <li style="float:right"><a href="#about">Log out</a></li>
             </ul>
     </div>
 
@@ -30,10 +30,10 @@
         <h1 id="demo">Log Out</h1>
     </div>
     
-    <div id="crono">
+    <!--<div id="crono">
         <div class="cronometro">
-            <div id="hms">00:00:00</div>
-    </div>
+            <p id="hms">00:00:00</p>
+    </div> -->
 
     <div id="contbtn">
         <div id="buttons">
@@ -56,7 +56,6 @@
             </div>
         </div>
     </div>
-
         <script>
 
             function modal(){
@@ -90,30 +89,96 @@
                             if(idbtns=="ava" && idconf=="confirm"){   
                                 document.getElementById('demo').style.color="aquamarine";
                                 document.getElementById('demo').innerHTML="Available";
-                                for(var i=0;i<btt.length;i++){
-                                    if(btt[i]=="lunch"){
-                                        document.getElementById(btt[i]).disabled=true;
-                                    }else{
-                                        document.getElementById(btt[i]).disabled=false;
-                                    }
+                                document.getElementById('ava').disabled=true;
+                                document.getElementById('unav').disabled=false;
+                                document.getElementById('lunch').disabled=false;
+                                document.getElementById('break').disabled=false;
+                                document.getElementById('meet').disabled=false;
+                                document.getElementById('coach').disabled=false;
+                                document.getElementById('state').style.backgroundImage='url("img/img.gif")';
+                                if(document.getElementById('hms').textContent=="00:00:00"){
+                                    cronometrar();
+                                }else{
+                                    reiniciar();
+                                    cronometrar();
                                 }
                             }else if(idbtns=="unav" && idconf=="confirm"){
                                 document.getElementById('demo').style.color="red";
                                 document.getElementById('demo').innerHTML="NotAvailable";
                                 document.getElementById('ava').disabled=false;
                                 document.getElementById('unav').disabled=true;
+                                document.getElementById('lunch').disabled=false;
+                                document.getElementById('break').disabled=false;
+                                document.getElementById('meet').disabled=false;
+                                document.getElementById('coach').disabled=false;
+                                if(document.getElementById('hms').textContent=="00:00:00"){
+                                    cronometrar();
+                                }else{
+                                    reiniciar();
+                                    cronometrar();
+                                }
                             }else if(idbtns=="lunch" && idconf=="confirm"){
                                 document.getElementById('demo').style.color="purple";
                                 document.getElementById('demo').innerHTML="Lunch";
+                                document.getElementById('ava').disabled=false;
+                                document.getElementById('unav').disabled=false;
+                                document.getElementById('lunch').disabled=true;
+                                document.getElementById('break').disabled=false;
+                                document.getElementById('meet').disabled=false;
+                                document.getElementById('coach').disabled=false;
+                                document.getElementById('state').style.background="none";
+                                document.getElementById('state').style.backgroundImage='url("img/imgl.gif")';
+                                if(document.getElementById('hms').textContent=="00:00:00"){
+                                    cronometrar();
+                                }else{
+                                    reiniciar();
+                                    cronometrar();
+                                }
                             }else if(idbtns=="break" && idconf=="confirm"){
                                 document.getElementById('demo').style.color="yellow";
                                 document.getElementById('demo').innerHTML="Break";
+                                document.getElementById('ava').disabled=false;
+                                document.getElementById('unav').disabled=false;
+                                document.getElementById('lunch').disabled=false;
+                                document.getElementById('break').disabled=true;
+                                document.getElementById('meet').disabled=false;
+                                document.getElementById('coach').disabled=false;
+                                if(document.getElementById('hms').textContent=="00:00:00"){
+                                    cronometrar();
+                                }else{
+                                    reiniciar();
+                                    cronometrar();
+                                }
                             }else if(idbtns=="meet" && idconf=="confirm"){
                                 document.getElementById('demo').style.color="green";
                                 document.getElementById('demo').innerHTML="Team Meeting";
+                                document.getElementById('ava').disabled=false;
+                                document.getElementById('unav').disabled=false;
+                                document.getElementById('lunch').disabled=false;
+                                document.getElementById('break').disabled=false;
+                                document.getElementById('meet').disabled=true;
+                                document.getElementById('coach').disabled=false;
+                                if(document.getElementById('hms').textContent=="00:00:00"){
+                                    cronometrar();
+                                }else{
+                                    reiniciar();
+                                    cronometrar();
+                                }
                             }else if(idbtns=="coach" && idconf=="confirm"){
                                 document.getElementById('demo').style.color="orange";
                                 document.getElementById('demo').innerHTML="Coaching";
+                                document.getElementById('ava').disabled=false;
+                                document.getElementById('unav').disabled=false;
+                                document.getElementById('lunch').disabled=false;
+                                document.getElementById('break').disabled=false;
+                                document.getElementById('meet').disabled=false;
+                                document.getElementById('coach').disabled=true;
+                                if(document.getElementById('hms').textContent=="00:00:00"){
+                                    cronometrar();
+                                }else{
+                                    reiniciar();
+                                    cronometrar();
+                                }
                             }  
                         })
                     }

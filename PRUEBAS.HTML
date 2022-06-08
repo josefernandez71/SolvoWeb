@@ -5,70 +5,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" type="text/css"  href="estilos_pruebas.css">
+    <link rel="stylesheet" type="text/css" href="estilos_pruebas.css">
 </head>
 <body>
-
-    <button class="btn" id="hola" >hola</button>
-    <button class="btn" id="hola1" >hola2</button>
-    <button class="btn" id="hola2" >hola3</button>
-    <button class="btn" id="hola3" >hola4</button>
-
-    <p id="text">Texto de ejemplo</p>
-
-    <div id="mymodal" class="modalcont">
-        <div id="modal-cont">
-            <div id="contm">
-                <h2>¿Desea Cambiar de estado?</h2>
-                <button class="fir" id="confirm">Confirmar</button>
-                <button class="fir" id="cancel" >cancelar</button>
-            </div>
-        </div>
+    <div class="btn">
+        <button>hola</button>
+        <button>como</button>
+        <button>llegue</button>
+        <button>aqui</button>
     </div>
-    <script>
-        window.onload= function(){
-            const btt=document.querySelectorAll('.btn');
-            const confi=document.querySelectorAll('.fir');
-            for(var i=0;i<btt.length;i++){
-                btt[i].addEventListener("click",function(){
-                    var test=this.id;
-                    modal();
-                    for(var j=0;j<confi.length;j++){
-                        confi[j].addEventListener("click",function(){
-                            var idconfi=this.id;
-                            if(test=="hola" && idconfi=="confirm"){
-                                document.getElementById('text').style.background="red";
-                            }
-                            else if(test=="hola1" && idconfi=="confirm"){
-                                document.getElementById('text').style.background="black";
-                            }
-                            else if(test=="hola2" && idconfi=="confirm"){
-                                document.getElementById('text').style.background="blue";
-                            }
-                            else if(test=="hola3" && idconfi=="confirm"){
-                                document.getElementById('text').style.background="orange";
-                            }
-                        })
-                    }
-                })
-            }
-        }
-        function modal(){
-            var modal = document.getElementById("mymodal");
-            var body = document.getElementsByTagName("body")[0];
-            var span =document.getElementById('confirm');
-            modal.style.display = "block";
-            body.style.position = "static";
-            body.style.height = "100%";
-            body.style.overflow = "hidden";
 
-            span.onclick = function() {
-                modal.style.display = "none";
-                body.style.position = "inherit";
-                body.style.height = "auto";
-                body.style.overflow = "visible";
-            }
-        }
-    </script>
+    <div class="texte">
+        <p>si empezamos maquetando un sitio web para la versión de escritorio y un usuario se conecta desde un dispositivo, primero cargará todo el contenido utilizado en la primera versión, hasta cargar los recursos necesarios  para móvil. Por lo tanto,  lo más recomendable es empezar a maquetar para la versión más pequeña, siempre optimizando el contenido que se utilice (hojas de estilos, ficheros, imágenes…), así conseguiremos que el usuario no cargue más recursos de los necesarios, reduciendo el tiempo de carga del sitio web.
+            La clave es conocer el tamaño, resolución o posibles orientaciones de las pantallas en las que necesitamos mostrar nuestro contenido basándonos en los usuarios que tenemos como objetivo.
+            Los pilares principales del Responsive son las Media Queries y la etiqueta Viewport.</p>
+    </div>
 </body>
 </html>

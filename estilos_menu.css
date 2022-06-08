@@ -3,8 +3,6 @@
     margin: 0;
     padding: 0;
     font-family: 'Rubik', sans-serif;
-    background-size: 100%;
-    background-repeat: no-repeat;
 }
 /*Barra de menu  y contenido desplegable*/
 ul{
@@ -77,7 +75,6 @@ li.dropdown {
  }
  /*Cuadro de estados*/
  #demo{
-
      line-height: 11vw;
      font-size: 5vw;
      width: 60vw;height: 12vw;
@@ -88,10 +85,13 @@ li.dropdown {
  }
  #state{
      align-items: center;
-     width: 60vw;height: 12vw;
+     width: 60vw;height: 15vw;
      margin-top: 4vw;margin-left: 20vw;
      text-align: center;
      background: rgba(255, 255,255, 0);
+     background-repeat: no-repeat;
+     background-size: 100%;
+     background-position: center;
  }
  /*Botones de estado*/
  #contbtn{
@@ -99,11 +99,12 @@ li.dropdown {
      height: 20vw;
      background: #223440;
      margin-top: 8.65vw;
+     overflow: hidden;
  }
  #buttons{
      width: 74vw;height: 10vw;
      position: relative;top: 5vw;left: 13vw;
-     display: flex;
+     display: inline-block;
      background: rgba(255, 255, 255,0);
  }
  #buttons button{
@@ -114,6 +115,8 @@ li.dropdown {
      border-radius: 10px;
      border: none;
      font-size: 1.3vw;
+     overflow: hidden;
+     
  }
  #buttons button:hover{
     transform: scale(1.2);
@@ -121,6 +124,35 @@ li.dropdown {
     text-transform: uppercase;
     font-weight: bold;
  }
+#buttons button:after,
+#buttons button:before{
+     width: 10vw;
+     height: 20vw;
+     content: '';
+     display: block;
+     background: rgba(255,255,255,0.8);
+     transform: rotate(45deg);
+     top: -10vw;
+     position: absolute;
+     transition: none;
+     right:-30vw;
+     cursor: pointer;
+ }
+ button:before{
+	left: -48%;
+}
+#buttons button:hover:after,
+#buttons button:hover:before{
+	transform: rotate(45deg), scaleX(130%);
+	background: rgba(255,255,255,0.1);
+	transition: all ease 0.5s;
+}
+#buttons button:hover:after{
+	right: 130%;
+}
+#buttons button:hover:before{
+	left: 130%;
+}
  #unav:hover{
     background: red;
  }
@@ -183,6 +215,28 @@ li.dropdown {
     position: relative;top: 6vw;left: 10vw;
     border: none; border-radius: 5px;
 }
+.modalcont{
+    animation-duration: 0.6s;
+    animation-name: slidein;
+  }
+  
+  @keyframes slidein {
+    from {
+      margin-top: 100%;
+      top: 300%;
+    }
+  
+    to {
+      margin-top: 0%;
+      height: 100%;
+    }
+  }
+  @media (max-width:700px) {
+    #buttons button{width: 100vw;height: 20vw;display: flex;margin: 0;font-size: 5vw;}
+    #buttons{display: block;position: relative;top: 0;left: 0;}
+    #contbtn{height: 100vw;background: none;}
+  }
+
 
 
     
