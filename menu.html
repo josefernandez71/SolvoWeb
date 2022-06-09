@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="estilos_menu.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap" rel="stylesheet">
+    <title>Document</title>
+</head>
+<body>
+    
+    <div id="cont">
+        <ul>
+            <li class="dropdown">
+            <a href="javascript:void(0)" class="dropbtn">opciones</a>
+            <div class="dropdown-content">
+            <a href="#">Servicio 01</a>
+            <a href="#">Servicio 02</a>
+            <a href="#">Servicio 03</a>
+            </div>
+            </li>
+            <li style="float:right"><a href="#about">Log out</a></li>
+            </ul>
+    </div>
+
+    <div id="state">
+        <h1 id="demo">Log Out</h1>
+    </div>
+    
+    <!--<div id="crono">
+        <div class="cronometro">
+            <p id="hms">00:00:00</p>
+    </div> -->
+
+    <div id="contbtn">
+        <div id="buttons">
+            <button class="btns" id="unav" >notavailable</button>
+            <button class="btns" id="ava" >Available</button>
+            <button class="btns" id="lunch" >Lunch</button>
+            <button class="btns" id="break" >Break</button>
+            <button class="btns" id="meet" >Team Meeting</button>
+            <button class="btns" id="coach" >Coaching</button>
+        </div>
+    </div>
+    
+
+    <div id="mymodal" class="modalcont">
+        <div id="modal-cont">
+            <div id="contm">
+                <h2>¿Desea Cambiar de estado?</h2>
+                <button class="conf" id="confirm">Confirmar</button>
+                <button class="conf" id="cancel" >cancelar</button>
+            </div>
+        </div>
+    </div>
+        <script>
+
+            function modal(){
+                var modal = document.getElementById("mymodal");
+			    var body = document.getElementsByTagName("body")[0];
+                var span =document.getElementById('confirm');
+                modal.style.display = "block";
+				body.style.position = "static";
+				body.style.height = "100%";
+				body.style.overflow = "hidden";
+
+                span.onclick = function() {
+                    modal.style.display = "none";
+                    body.style.position = "inherit";
+                    body.style.height = "auto";
+                    body.style.overflow = "visible";
+                }
+            }
+            window.onload = init;
+            function init(){
+
+            const btt=document.querySelectorAll('.btns');
+            const confi=document.querySelectorAll('.conf');
+            for(var i=0;i<btt.length;i++){
+                btt[i].addEventListener("click",function(){
+                    var idbtns=this.id;
+                    modal();
+                    for(var j=0;j<confi.length;j++){
+                        confi[j].addEventListener("click",function(){
+                            var idconf=this.id;
+                            if(idbtns=="ava" && idconf=="confirm"){   
+                                document.getElementById('demo').style.color="aquamarine";
+                                document.getElementById('demo').innerHTML="Available";
+                                document.getElementById('ava').disabled=true;
+                                document.getElementById('unav').disabled=false;
+                                document.getElementById('lunch').disabled=false;
+                                document.getElementById('break').disabled=false;
+                                document.getElementById('meet').disabled=false;
+                                document.getElementById('coach').disabled=false;
+                                document.getElementById('state').style.backgroundImage='url("img/img.gif")';
+                                if(document.getElementById('hms').textContent=="00:00:00"){
+                                    cronometrar();
+                                }else{
+                                    reiniciar();
+                                    cronometrar();
+                                }
+                            }else if(idbtns=="unav" && idconf=="confirm"){
+                                document.getElementById('demo').style.color="red";
+                                document.getElementById('demo').innerHTML="NotAvailable";
+                                document.getElementById('ava').disabled=false;
+                                document.getElementById('unav').disabled=true;
+                                document.getElementById('lunch').disabled=false;
+                                document.getElementById('break').disabled=false;
+                                document.getElementById('meet').disabled=false;
+                                document.getElementById('coach').disabled=false;
+                                if(document.getElementById('hms').textContent=="00:00:00"){
+                                    cronometrar();
+                                }else{
+                                    reiniciar();
+                                    cronometrar();
+                                }
+                            }else if(idbtns=="lunch" && idconf=="confirm"){
+                                document.getElementById('demo').style.color="purple";
+                                document.getElementById('demo').innerHTML="Lunch";
+                                document.getElementById('ava').disabled=false;
+                                document.getElementById('unav').disabled=false;
+                                document.getElementById('lunch').disabled=true;
+                                document.getElementById('break').disabled=false;
+                                document.getElementById('meet').disabled=false;
+                                document.getElementById('coach').disabled=false;
+                                document.getElementById('state').style.background="none";
+                                document.getElementById('state').style.backgroundImage='url("img/imgl.gif")';
+                                if(document.getElementById('hms').textContent=="00:00:00"){
+                                    cronometrar();
+                                }else{
+                                    reiniciar();
+                                    cronometrar();
+                                }
+                            }else if(idbtns=="break" && idconf=="confirm"){
+                                document.getElementById('demo').style.color="yellow";
+                                document.getElementById('demo').innerHTML="Break";
+                                document.getElementById('ava').disabled=false;
+                                document.getElementById('unav').disabled=false;
+                                document.getElementById('lunch').disabled=false;
+                                document.getElementById('break').disabled=true;
+                                document.getElementById('meet').disabled=false;
+                                document.getElementById('coach').disabled=false;
+                                if(document.getElementById('hms').textContent=="00:00:00"){
+                                    cronometrar();
+                                }else{
+                                    reiniciar();
+                                    cronometrar();
+                                }
+                            }else if(idbtns=="meet" && idconf=="confirm"){
+                                document.getElementById('demo').style.color="green";
+                                document.getElementById('demo').innerHTML="Team Meeting";
+                                document.getElementById('ava').disabled=false;
+                                document.getElementById('unav').disabled=false;
+                                document.getElementById('lunch').disabled=false;
+                                document.getElementById('break').disabled=false;
+                                document.getElementById('meet').disabled=true;
+                                document.getElementById('coach').disabled=false;
+                                if(document.getElementById('hms').textContent=="00:00:00"){
+                                    cronometrar();
+                                }else{
+                                    reiniciar();
+                                    cronometrar();
+                                }
+                            }else if(idbtns=="coach" && idconf=="confirm"){
+                                document.getElementById('demo').style.color="orange";
+                                document.getElementById('demo').innerHTML="Coaching";
+                                document.getElementById('ava').disabled=false;
+                                document.getElementById('unav').disabled=false;
+                                document.getElementById('lunch').disabled=false;
+                                document.getElementById('break').disabled=false;
+                                document.getElementById('meet').disabled=false;
+                                document.getElementById('coach').disabled=true;
+                                if(document.getElementById('hms').textContent=="00:00:00"){
+                                    cronometrar();
+                                }else{
+                                    reiniciar();
+                                    cronometrar();
+                                }
+                            }  
+                        })
+                    }
+                })
+            }
+            h = 0;
+            m = 0;
+            s = 0;
+            document.getElementById("hms").innerHTML="00:00:00";
+            }   
+            function cronometrar(){
+            escribir();
+            id = setInterval(escribir,1000);
+            document.querySelector(".start").removeEventListener("click",cronometrar);
+            }
+            function escribir(){
+            var hAux, mAux, sAux;
+            s++;
+            if (s>59){m++;s=0;}
+            if (m>59){h++;m=0;}
+            if (h>24){h=0;}
+        
+            if (s<10){sAux="0"+s;}else{sAux=s;}
+            if (m<10){mAux="0"+m;}else{mAux=m;}
+            if (h<10){hAux="0"+h;}else{hAux=h;}
+        
+            document.getElementById("hms").innerHTML = hAux + ":" + mAux + ":" + sAux; 
+            }
+            function parar(){
+            clearInterval(id);
+            document.querySelector(".start").addEventListener("click",cronometrar);
+        
+            }
+            function reiniciar(){
+            clearInterval(id);
+            document.getElementById("hms").innerHTML="00:00:00";
+            h=0;m=0;s=0;
+            document.querySelector(".start").addEventListener("click",cronometrar);
+            }
+            </script>
+
+    </div>
+</body>
+</html>
