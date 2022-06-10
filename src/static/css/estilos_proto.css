@@ -43,7 +43,7 @@ h2 {
 }
 
 #iconuser {
-    background-image: url('img/solvoicon.png');
+    background-image: url('../img/iconuser.png');
     background-size: 100%;
     width: 2vw;
     height: 2vw;
@@ -90,7 +90,7 @@ h2 {
 }
 
 #iconsolvo {
-    background-image: url('img/solvoicon.png');
+    background-image: url("../img/solvoicon.png");
     width: 18vw;
     height: 12vw;
     background-size: 60%;
