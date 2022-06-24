@@ -9,7 +9,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap" rel="stylesheet">
-    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+    <title>Menu</title>
 </head>
 
 <body>
@@ -19,7 +22,7 @@
             <li class="dropdown">
                 <a href="javascript:void(0)" class="dropbtn">opciones</a>
                 <div class="dropdown-content">
-                    <a href="{{url_for('AdminUser')}}">Servicio 01</a>
+                    <a href="{{url_for('AdminUser')}}">Admin users</a>
                     <a href="#">Servicio 02</a>
                     <a href="#">Servicio 03</a>
                 </div>
@@ -32,224 +35,237 @@
     </div>
 
     <div id="state">
-        <h1 id="demo">Log Out</h1>
+        <h1 id="demo">{{estado.nombre}}</h1>
     </div>
 
-    <!--<div id="crono">
+    <div id="crono">
         <div class="cronometro">
             <p id="hms">00:00:00</p>
-    </div> -->
-
-    <div id="contbtn">
-        <div id="buttons">
-            <button class="btns" id="unav">notavailable</button>
-            <button class="btns" id="ava">Available</button>
-            <button class="btns" id="lunch">Lunch</button>
-            <button class="btns" id="break">Break</button>
-            <button class="btns" id="meet">Team Meeting</button>
-            <button class="btns" id="coach">Coaching</button>
+            <p id="estAct">{{estadoactual.hora_inicio}}</p>
         </div>
-    </div>
+
+        <div id="contbtn">
+            <!--<div id="buttons">-->
+            <form action="/changeState" method="POST" id="buttons">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="button" class="btns" id="unav" value="Not Available">
+                <input type="button" class="btns" id="ava" value="Available">
+                <input type="button" class="btns" id="lunch" value="Lunch">
+                <input type="button" class="btns" id="break" value="Break">
+                <input type="button" class="btns" id="meet" value="Team Meeting">
+                <input type="button" class="btns" id="coach" value="Coaching">
+                <input type="hidden" class="btns" id="estado" name="estado" value="Not Available">
+
+            </form>
+            <input type="hidden" id="btnIniciar" value="">
+
+            <!--</div>-->
+        </div>
 
 
-    <div id="mymodal" class="modalcont">
-        <div id="modal-cont">
-            <div id="contm">
-                <h2>¿Desea Cambiar de estado?</h2>
-                <button class="conf" id="confirm">Confirmar</button>
-                <button class="conf" id="cancel">cancelar</button>
+        <div id="mymodal" class="modalcont">
+            <div id="modal-cont">
+                <div id="contm">
+                    <h2>¿Desea Cambiar de estado?</h2>
+                    <button class="conf" id="confirm">Confirmar</button>
+                    <button class="conf" id="cancel">cancelar</button>
+                </div>
             </div>
         </div>
-    </div>
-    <script>
-        function modal() {
-            var modal = document.getElementById("mymodal");
-            var body = document.getElementsByTagName("body")[0];
-            var span = document.getElementById('confirm');
-            modal.style.display = "block";
-            body.style.position = "static";
-            body.style.height = "100%";
-            body.style.overflow = "hidden";
 
-            span.onclick = function() {
-                modal.style.display = "none";
-                body.style.position = "inherit";
-                body.style.height = "auto";
-                body.style.overflow = "visible";
+        <script>
+            let tiempoInicio = null;
+            const $tiempoTranscurrido = document.querySelector("#hms"),
+                $btnIniciar = document.querySelector("#btnIniciar");
+            let diferenciaTemporal = 0;
+
+            $(document).ready(function() {
+
+                function changeState() {
+                    $.ajax({
+                        url: '/changeState',
+                        data: $('form').serialize(),
+                        type: 'POST',
+                        response: null,
+                        success: function(response) {
+                            response = JSON.parse(response)
+                            document.querySelector('#demo').innerHTML = '';
+                            document.querySelector('#estAct').innerHTML = '';
+                            //console.log(response);
+                            esta = response['estado'];
+                            actuesta = response['estadoactual'];
+                            var date = new Date(convertFromStringToDate(actuesta.hora_inicio));
+                            //console.log(date);
+                            diferenciaTemporal = new Date() - date.getTime();
+                            document.querySelector('#demo').innerHTML = esta.nombre;
+                            console.log(esta.nombre);
+                            document.querySelector('#estAct').innerHTML = actuesta.hora_inicio;
+                            color();
+                            $btnIniciar.click();
+                        },
+                        error: function(error) {
+                            console.log(error);
+                        }
+                    })
+                }
+
+
+
+                $('#buttons').submit(function(event) {
+                    event.preventDefault();
+                    changeState();
+                });
+
+            });
+
+            function convertFromStringToDate(responseDate) {
+                let dateComponents = responseDate.split(' ');
+                let datePieces = dateComponents[0].split("-");
+                let timePieces = dateComponents[1].split(":");
+                return (new Date(datePieces[0], (datePieces[1] - 1), datePieces[2],
+                    timePieces[0], timePieces[1], timePieces[2]))
             }
-        }
-        window.onload = init;
 
-        function init() {
+            function modal() {
+                var modal = document.getElementById("mymodal");
+                var body = document.getElementsByTagName("body")[0];
+                var span = document.getElementById('confirm');
+                var demo = document.getElementById('demo');
+                modal.style.display = "block";
+                body.style.position = "static";
+                body.style.height = "100%";
+                body.style.overflow = "hidden";
 
-            const btt = document.querySelectorAll('.btns');
-            const confi = document.querySelectorAll('.conf');
-            for (var i = 0; i < btt.length; i++) {
-                btt[i].addEventListener("click", function() {
-                    var idbtns = this.id;
-                    modal();
-                    for (var j = 0; j < confi.length; j++) {
-                        confi[j].addEventListener("click", function() {
-                            var idconf = this.id;
-                            if (idbtns == "ava" && idconf == "confirm") {
-                                document.getElementById('demo').style.color = "aquamarine";
-                                document.getElementById('demo').innerHTML = "Available";
-                                document.getElementById('ava').disabled = true;
-                                document.getElementById('unav').disabled = false;
-                                document.getElementById('lunch').disabled = false;
-                                document.getElementById('break').disabled = false;
-                                document.getElementById('meet').disabled = false;
-                                document.getElementById('coach').disabled = false;
-                                document.getElementById('state').style.backgroundImage = 'url("img/img.gif")';
-                                if (document.getElementById('hms').textContent == "00:00:00") {
-                                    cronometrar();
-                                } else {
-                                    reiniciar();
-                                    cronometrar();
+                span.onclick = function() {
+                    modal.style.display = "none";
+                    body.style.position = "inherit";
+                    body.style.height = "auto";
+                    body.style.overflow = "visible";
+                }
+            }
+            window.onload = init;
+
+            function init() {
+                var date = new Date(convertFromStringToDate(document.getElementById('estAct').textContent));
+                console.log(date)
+                diferenciaTemporal = new Date() - date.getTime();
+                color();
+                $btnIniciar.click();
+                const btt = document.querySelectorAll('.btns');
+                const confi = document.querySelectorAll('.conf');
+                for (var i = 0; i < btt.length; i++) {
+                    btt[i].addEventListener("click", function() {
+                        var idbtns = this.id;
+                        modal();
+                        for (var j = 0; j < confi.length; j++) {
+                            confi[j].addEventListener("click", function() {
+                                var idconf = this.id;
+                                color();
+                                if (idbtns == "ava" && idconf == "confirm") {
+                                    document.querySelector('#estado').value = document.querySelector('#ava').value
+                                    $('#buttons').submit();
+                                } else if (idbtns == "unav" && idconf == "confirm") {
+                                    document.querySelector('#estado').value = document.querySelector('#unav').value
+                                    $('#buttons').submit();
+                                } else if (idbtns == "lunch" && idconf == "confirm") {
+                                    document.querySelector('#estado').value = document.querySelector('#lunch').value
+                                    $('#buttons').submit();
+
+                                } else if (idbtns == "break" && idconf == "confirm") {
+                                    document.querySelector('#estado').value = document.querySelector('#break').value
+                                    $('#buttons').submit();
+                                } else if (idbtns == "meet" && idconf == "confirm") {
+                                    document.querySelector('#estado').value = document.querySelector('#meet').value
+                                    $('#buttons').submit();
+
+                                } else if (idbtns == "coach" && idconf == "confirm") {
+                                    document.querySelector('#estado').value = document.querySelector('#coach').value
+                                    $('#buttons').submit();
+
                                 }
-                            } else if (idbtns == "unav" && idconf == "confirm") {
-                                document.getElementById('demo').style.color = "red";
-                                document.getElementById('demo').innerHTML = "NotAvailable";
-                                document.getElementById('ava').disabled = false;
-                                document.getElementById('unav').disabled = true;
-                                document.getElementById('lunch').disabled = false;
-                                document.getElementById('break').disabled = false;
-                                document.getElementById('meet').disabled = false;
-                                document.getElementById('coach').disabled = false;
-                                if (document.getElementById('hms').textContent == "00:00:00") {
-                                    cronometrar();
-                                } else {
-                                    reiniciar();
-                                    cronometrar();
-                                }
-                            } else if (idbtns == "lunch" && idconf == "confirm") {
-                                document.getElementById('demo').style.color = "purple";
-                                document.getElementById('demo').innerHTML = "Lunch";
-                                document.getElementById('ava').disabled = false;
-                                document.getElementById('unav').disabled = false;
-                                document.getElementById('lunch').disabled = true;
-                                document.getElementById('break').disabled = false;
-                                document.getElementById('meet').disabled = false;
-                                document.getElementById('coach').disabled = false;
-                                document.getElementById('state').style.background = "none";
-                                document.getElementById('state').style.backgroundImage = 'url("img/imgl.gif")';
-                                if (document.getElementById('hms').textContent == "00:00:00") {
-                                    cronometrar();
-                                } else {
-                                    reiniciar();
-                                    cronometrar();
-                                }
-                            } else if (idbtns == "break" && idconf == "confirm") {
-                                document.getElementById('demo').style.color = "yellow";
-                                document.getElementById('demo').innerHTML = "Break";
-                                document.getElementById('ava').disabled = false;
-                                document.getElementById('unav').disabled = false;
-                                document.getElementById('lunch').disabled = false;
-                                document.getElementById('break').disabled = true;
-                                document.getElementById('meet').disabled = false;
-                                document.getElementById('coach').disabled = false;
-                                if (document.getElementById('hms').textContent == "00:00:00") {
-                                    cronometrar();
-                                } else {
-                                    reiniciar();
-                                    cronometrar();
-                                }
-                            } else if (idbtns == "meet" && idconf == "confirm") {
-                                document.getElementById('demo').style.color = "green";
-                                document.getElementById('demo').innerHTML = "Team Meeting";
-                                document.getElementById('ava').disabled = false;
-                                document.getElementById('unav').disabled = false;
-                                document.getElementById('lunch').disabled = false;
-                                document.getElementById('break').disabled = false;
-                                document.getElementById('meet').disabled = true;
-                                document.getElementById('coach').disabled = false;
-                                if (document.getElementById('hms').textContent == "00:00:00") {
-                                    cronometrar();
-                                } else {
-                                    reiniciar();
-                                    cronometrar();
-                                }
-                            } else if (idbtns == "coach" && idconf == "confirm") {
-                                document.getElementById('demo').style.color = "orange";
-                                document.getElementById('demo').innerHTML = "Coaching";
-                                document.getElementById('ava').disabled = false;
-                                document.getElementById('unav').disabled = false;
-                                document.getElementById('lunch').disabled = false;
-                                document.getElementById('break').disabled = false;
-                                document.getElementById('meet').disabled = false;
-                                document.getElementById('coach').disabled = true;
-                                if (document.getElementById('hms').textContent == "00:00:00") {
-                                    cronometrar();
-                                } else {
-                                    reiniciar();
-                                    cronometrar();
-                                }
-                            }
-                        })
-                    }
-                })
-            }
-            h = 0;
-            m = 0;
-            s = 0;
-            document.getElementById("hms").innerHTML = "00:00:00";
-        }
-
-        function cronometrar() {
-            escribir();
-            id = setInterval(escribir, 1000);
-            document.querySelector(".start").removeEventListener("click", cronometrar);
-        }
-
-        function escribir() {
-            var hAux, mAux, sAux;
-            s++;
-            if (s > 59) {
-                m++;
-                s = 0;
-            }
-            if (m > 59) {
-                h++;
-                m = 0;
-            }
-            if (h > 24) {
-                h = 0;
+                            })
+                        }
+                    })
+                }
             }
 
-            if (s < 10) {
-                sAux = "0" + s;
-            } else {
-                sAux = s;
+            function color() {
+                if (demo.textContent == "New-hire") {
+                    demo.style.color = "aquamarine";
+                } else if (demo.textContent == "Available") {
+                    demo.style.color = "aquamarine";
+                    disablefasle();
+                    document.getElementById('ava').disabled = true;
+                } else if (demo.textContent == "Break") {
+                    demo.style.color = "yellow";
+                    disablefasle();
+                    document.getElementById('break').disabled = true;
+                } else if (demo.textContent == "Lunch") {
+                    demo.style.color = "purple";
+                    disablefasle();
+                    document.getElementById('lunch').disabled = true;
+                } else if (demo.textContent == "Team Meeting") {
+                    demo.style.color = "green";
+                    disablefasle();
+                    document.getElementById('meet').disabled = true;
+                } else if (demo.textContent == "Not Available") {
+                    demo.style.color = "red";
+                    disablefasle();
+                    document.getElementById('unav').disabled = true;
+                } else if (demo.textContent == "Coaching") {
+                    demo.style.color = "orange";
+                    disablefasle();
+                    document.getElementById('coach').disabled = true;
+                }
             }
-            if (m < 10) {
-                mAux = "0" + m;
-            } else {
-                mAux = m;
+
+            function disablefasle() {
+                document.getElementById('ava').disabled = false;
+                document.getElementById('unav').disabled = false;
+                document.getElementById('lunch').disabled = false;
+                document.getElementById('break').disabled = false;
+                document.getElementById('meet').disabled = false;
+                document.getElementById('coach').disabled = false;
             }
-            if (h < 10) {
-                hAux = "0" + h;
-            } else {
-                hAux = h;
+
+
+
+
+            const agregarCeroSiEsNecesario = valor => {
+                if (valor < 10) {
+                    return "0" + valor;
+                } else {
+                    return "" + valor;
+                }
             }
+            const milisegundosAMinutosYSegundos = (milisegundos) => {
+                const horas = parseInt(milisegundos / 1000 / 60 / 60);
+                milisegundos -= horas * 60 * 60 * 1000;
+                const minutos = parseInt(milisegundos / 1000 / 60);
 
-            document.getElementById("hms").innerHTML = hAux + ":" + mAux + ":" + sAux;
-        }
+                milisegundos -= minutos * 60 * 1000;
+                const segundos = (milisegundos / 1000);
+                return `${agregarCeroSiEsNecesario(horas)}:${agregarCeroSiEsNecesario(minutos)}:${agregarCeroSiEsNecesario(segundos.toFixed())}`;
+            };
+            const iniciar = () => {
+                const ahora = new Date();
+                tiempoInicio = new Date(ahora.getTime() - diferenciaTemporal);
+                setInterval(refrescarTiempo, 100);
+            };
 
-        function parar() {
-            clearInterval(id);
-            document.querySelector(".start").addEventListener("click", cronometrar);
+            const refrescarTiempo = () => {
+                const ahora = new Date();
+                const diferencia = ahora.getTime() - tiempoInicio.getTime();
+                $tiempoTranscurrido.textContent = milisegundosAMinutosYSegundos(diferencia);
+            };
 
-        }
+            const init1 = () => {
+                $tiempoTranscurrido.textContent = "00:00:00";
+            };
+            init1;
+            $btnIniciar.onclick = iniciar;
+        </script>
 
-        function reiniciar() {
-            clearInterval(id);
-            document.getElementById("hms").innerHTML = "00:00:00";
-            h = 0;
-            m = 0;
-            s = 0;
-            document.querySelector(".start").addEventListener("click", cronometrar);
-        }
-    </script>
 
     </div>
 </body>

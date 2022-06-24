@@ -48,12 +48,16 @@
                 <input type="text" name="email" id="email" placeholder="Email">
                 <label for="">SUPERVISOR</label>
                 <select type="text" name="supervisor" id="supervisor">
-                <option value="1">sebastian</option>
+                {% for sup in ListSup%}
+                    <option name="sup" value="{{sup.0}}">{{sup.1}}</option>
+                {%endfor%}  
                 </select>
+
                 <label for="">PROFILE</label>
                 <select type="text" name="profile" id="profile">
-                    <option value="supervisor">Supervisor</option>
                     <option value="interpreter">Interpreter</option>
+                    <option value="supervisor">Supervisor</option>
+                    
                 </select>
 
                 <div class="w3-row w3-container m2 "><label for="">PASSWORD</label>
@@ -62,6 +66,24 @@
         </form>
         </div>
         </table>
+        <div>
+
+
+        </div>
+
+
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script>
+            $("#profile").change(function() {
+                if ($('#profile').val() == "supervisor") {
+                    $('#supervisor').prop('disabled', 'disabled');
+                } else {
+                    $('#supervisor').prop('disabled', false);
+                }
+            });
+        </script>
+
 </body>
 
 </html>

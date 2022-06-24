@@ -1,0 +1,30 @@
+*{
+  margin:0;
+  padding:0;
+}
+#contsele{
+  width:70vw;height:4vw;
+  margin:1vw 15vw;
+  padding:3vw 0 0 0;
+}
+#contsele label{
+  width:6vw;height:4vw;
+  font-size:1.4vw;
+}
+#contsele button{
+  width:5vw;height:3vw;
+}
+#contable{ 
+  width:80vw;height:30vw;
+  overflow:scroll;
+  margin: 0px 10vw;
+  background: gray;
+  text-align:center;
+}
+#contable th,tr,td{
+ border-bottom:solid black;
+}
+#download{
+  width:6vw;
+  margin-left:30vw;
+}

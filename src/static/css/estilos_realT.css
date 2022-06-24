@@ -1,0 +1,23 @@
+*{
+  margin:0;
+  padding:0;
+}
+#contsele{
+  width:80vw;height:6vw;
+  font-size:4vw;
+  margin:2vw 10vw;
+  margin-bottom:0;
+  background:orange; 
+  text-align:center;
+}
+
+#contable{ 
+  width:80vw;height:40vw;
+  overflow:scroll;
+  margin: 0vw 10vw;
+  background: gray;
+  text-align:center;
+}
+#contable th,tr,td{
+ border-bottom:solid black;
+}

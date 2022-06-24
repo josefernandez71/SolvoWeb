@@ -1,12 +1,13 @@
 from .entities.User import User
 from werkzeug.security import check_password_hash,generate_password_hash
+from datetime import datetime
 class ModelUser():
 
     @classmethod
     def login(self, db, user):
         try:
             cursor = db.connection.cursor()
-            sql = """SELECT ID_INTERPRETER,CORREO_SOLVO,CONTRASENA,ID_SOLVO,NOMBRES,APELLIDOS,ESTADO,ID_SUPERVISOR FROM interpreter 
+            sql = """SELECT ID_USUARIO,CORREO_SOLVO,CONTRASENA,ID_SOLVO,NOMBRES,APELLIDOS,ESTADO,ID_SUPERVISOR FROM usuario 
                     WHERE CORREO_SOLVO = '{}'""".format(user.correo_solvo)
             cursor.execute(sql)
             row = cursor.fetchone()
@@ -22,55 +23,49 @@ class ModelUser():
     def ExistsUser(self, db, user,tipo):
         try:
             cursor = db.connection.cursor()
-            sql = """SELECT CORREO_SOLVO FROM interpreter 
+            sql = """SELECT CORREO_SOLVO FROM usuario 
                     WHERE CORREO_SOLVO = '{}'""".format(user.correo_solvo)        
             cursor.execute(sql)
             row = cursor.fetchone()
             if row != None:
                 user = User(0,row[0],"")
-                print(str(user))
                 return user
             else:
-                sql = """SELECT CORREO_SOLVO FROM supervisor 
-                    WHERE CORREO_SOLVO = '{}'""".format(user.correo_solvo)        
-                cursor.execute(sql)
-                row = cursor.fetchone()
-                if row != None:
-                    user = User(0,row[0],"")
-                    print(str(user))
-                    return user
-                else:
-                    return None
+                return None
         except Exception as ex:
             raise Exception(ex)
+        
 
     @classmethod
     def addInterp(self, db, user):
         try:
             cursor = db.connection.cursor()
-            sql = """INSERT INTO interpreter (ID_INTERPRETER,CORREO_SOLVO,CONTRASENA,ID_SOLVO,NOMBRES,APELLIDOS,ESTADO,ID_SUPERVISOR)
+            sql = """INSERT INTO USUARIO (ID_USUARIO,CORREO_SOLVO,CONTRASENA,ID_SOLVO,NOMBRES,APELLIDOS,ESTADO,ID_SUPERVISOR)
                 VALUES (null,%s,%s, %s, %s,%s,%s,%s)"""
             cursor.execute(sql,(user.correo_solvo,generate_password_hash(user.contrasena),user.id_solvo,user.nombres,user.apellidos,user.estado,user.id_supervisor))
-            db.connection.commit()   
+            db.connection.commit()
+               
         except Exception as ex:
             raise Exception(ex)
+        
         
     @classmethod
     def addSup(self, db, user):
         try:
             cursor = db.connection.cursor()
-            sql = """INSERT INTO supervisor (ID_SUPERVISOR,CORREO_SOLVO,CONTRASENA,ID_SOLVO,NOMBRES,APELLIDOS,ESTADO)
+            sql = """INSERT INTO USUARIO (ID_USUARIO,CORREO_SOLVO,CONTRASENA,ID_SOLVO,NOMBRES,APELLIDOS,ESTADO)
                 VALUES (null,%s,%s, %s,%s,%s,%s)"""
             cursor.execute(sql,(user.correo_solvo,generate_password_hash(user.contrasena),user.id_solvo,user.nombres,user.apellidos,user.estado))
-            db.connection.commit()   
+            db.connection.commit() 
         except Exception as ex:
             raise Exception(ex)
+        
 
     @classmethod
     def get_by_id(self, db, id):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT ID_INTERPRETER,CORREO_SOLVO,ID_SOLVO,NOMBRES,APELLIDOS,ESTADO,ID_SUPERVISOR FROM interpreter WHERE ID_INTERPRETER = {}".format(id)
+            sql = "SELECT ID_USUARIO,CORREO_SOLVO,ID_SOLVO,NOMBRES,APELLIDOS,ESTADO,ID_SUPERVISOR FROM usuario WHERE ID_USUARIO = {}".format(id)
             cursor.execute(sql)
             row = cursor.fetchone()
             if row != None:
@@ -81,3 +76,21 @@ class ModelUser():
                 return None
         except Exception as ex:
             raise Exception(ex)
+        
+        
+    @classmethod
+    def ListSup(self,db):
+        try:
+            cursor = db.connection.cursor()
+            sql = "SELECT id_supervisor,NOMBRES FROM supervisor "
+            cursor.execute(sql)
+            return cursor.fetchall()
+        except Exception as ex:
+            raise Exception(ex)
+        
+    
+           
+           
+    
+      
+           
