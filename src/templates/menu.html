@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
     <title>Menu</title>
 </head>
@@ -35,26 +35,25 @@
     </div>
 
     <div id="state">
-        <h1 id="demo">{{estado.nombre}}</h1>
+        <h1 id="demo"></h1>
     </div>
 
     <div id="crono">
         <div class="cronometro">
-            <p id="hms">00:00:00</p>
-            <p id="estAct">{{estadoactual.hora_inicio}}</p>
+            <p id="hms"></p>
         </div>
 
         <div id="contbtn">
             <!--<div id="buttons">-->
             <form action="/changeState" method="POST" id="buttons">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <input type="button" class="btns" id="unav" value="Not Available">
-                <input type="button" class="btns" id="ava" value="Available">
-                <input type="button" class="btns" id="lunch" value="Lunch">
-                <input type="button" class="btns" id="break" value="Break">
-                <input type="button" class="btns" id="meet" value="Team Meeting">
-                <input type="button" class="btns" id="coach" value="Coaching">
-                <input type="hidden" class="btns" id="estado" name="estado" value="Not Available">
+                <input type="button" class="unav" id="unav" value="Not Available">
+                <input type="button" class="ava" id="ava" value="Available">
+                <input type="button" class="lunch" id="lunch" value="Lunch">
+                <input type="button" class="break" id="break" value="Break">
+                <input type="button" class="meet" id="meet" value="Team Meeting">
+                <input type="button" class="coach" id="coach" value="Coaching">
+                <input type="hidden" class="estado" id="estado" name="estado" value="Not Available">
 
             </form>
             <input type="hidden" id="btnIniciar" value="">
@@ -72,51 +71,119 @@
                 </div>
             </div>
         </div>
-
-        <script>
+        {% block javascript %}
+        <script type="text/javascript">
+            response = null;
             let tiempoInicio = null;
+            let tiempoAnterior = 0;
             const $tiempoTranscurrido = document.querySelector("#hms"),
                 $btnIniciar = document.querySelector("#btnIniciar");
             let diferenciaTemporal = 0;
-
             $(document).ready(function() {
-
-                function changeState() {
-                    $.ajax({
-                        url: '/changeState',
-                        data: $('form').serialize(),
-                        type: 'POST',
-                        response: null,
-                        success: function(response) {
-                            response = JSON.parse(response)
-                            document.querySelector('#demo').innerHTML = '';
-                            document.querySelector('#estAct').innerHTML = '';
-                            //console.log(response);
-                            esta = response['estado'];
-                            actuesta = response['estadoactual'];
-                            var date = new Date(convertFromStringToDate(actuesta.hora_inicio));
-                            //console.log(date);
-                            diferenciaTemporal = new Date() - date.getTime();
-                            document.querySelector('#demo').innerHTML = esta.nombre;
-                            console.log(esta.nombre);
-                            document.querySelector('#estAct').innerHTML = actuesta.hora_inicio;
-                            color();
-                            $btnIniciar.click();
-                        },
-                        error: function(error) {
-                            console.log(error);
-                        }
-                    })
-                }
-
-
-
-                $('#buttons').submit(function(event) {
-                    event.preventDefault();
-                    changeState();
+                $(".ava").click(function() {
+                    clickEstado("Avalable");
                 });
-
+                $(".break").click(function() {
+                    clickEstado("Break");
+                });
+                $(".lunch").click(function() {
+                    clickEstado("Lunch");
+                });
+                $(".unav").click(function() {
+                    clickEstado("Not Available");
+                });
+                $(".meet").click(function() {
+                    clickEstado("Meet");
+                });
+                $(".coach").click(function() {
+                    clickEstado("Coaching");
+                });
+                $("#confirm").click(function() {
+                    $('#buttons').submit();
+                });
             });
+            $(document).on('submit', '#buttons', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '/changeState',
+                    data: $('form').serializeArray(),
+                    type: 'POST',
+                    response: null,
+                    success: function(response) {
+                        console.log('hola', response);
+                        cambio(response);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+
+            function clickEstado(aux) {
+                if (aux == "Avalable") {
+                    document.querySelector('#estado').value = 'Available'
+                    modal();
+                } else if (aux == "Break") {
+                    console.log('hola');
+                    document.querySelector('#estado').value = 'Break';
+                    modal();
+                } else if (aux == 'Lunch') {
+                    document.querySelector('#estado').value = 'Lunch'
+                    modal();
+                } else if (aux == "Not Available") {
+                    document.querySelector('#estado').value = 'Not Available'
+                    modal();
+
+                } else if (aux == "Meet") {
+                    document.querySelector('#estado').value = 'Team Meeting'
+                    modal();
+                } else if (aux == "Coaching") {
+                    document.querySelector('#estado').value = 'Coaching'
+                    modal();
+                } else {
+                    console.log(aux);
+                }
+            }
+
+            function cambio(response) {
+                diferenciaTemporal = null;
+                tiempoAnterior = 0;
+                totalStates = 0;
+                tiempoInicio = null;
+                document.querySelector('#demo').innerHTML = '';
+                if (response['estado'] != null) {
+                    esta = response['estado'];
+                } else {
+                    esta = {
+                        'id': 'logout',
+                        'nombre': 'Logout'
+                    }
+                }
+                if (response['estadoactual'] != null) {
+                    actuesta = response['estadoactual'];
+                    date = new Date(convertFromStringToDate(actuesta.hora_inicio));
+                    diferenciaTemporal = new Date() - date.getTime();
+                    console.log(diferenciaTemporal)
+                }
+                if (response['totalStates'] === null) {
+                    totalStates = null;
+                    tiempoAnterior = 0;
+                    console.log('no existen totales')
+                } else {
+                    totalStates = response['totalStates']
+                    if (totalStates[esta.nombre] === null) {
+                        console.log('estado No existe')
+                        tiempoAnterior = 0
+                    } else {
+
+                        tiempoAnterior = totalStates[esta.nombre]
+
+                    }
+                }
+                document.querySelector('#demo').innerHTML = esta.nombre;
+                color();
+                $btnIniciar.click();
+            }
 
             function convertFromStringToDate(responseDate) {
                 let dateComponents = responseDate.split(' ');
@@ -125,6 +192,7 @@
                 return (new Date(datePieces[0], (datePieces[1] - 1), datePieces[2],
                     timePieces[0], timePieces[1], timePieces[2]))
             }
+
 
             function modal() {
                 var modal = document.getElementById("mymodal");
@@ -146,47 +214,9 @@
             window.onload = init;
 
             function init() {
-                var date = new Date(convertFromStringToDate(document.getElementById('estAct').textContent));
-                console.log(date)
-                diferenciaTemporal = new Date() - date.getTime();
+                response = JSON.parse('{{data | tojson}}');
+                cambio(response);
                 color();
-                $btnIniciar.click();
-                const btt = document.querySelectorAll('.btns');
-                const confi = document.querySelectorAll('.conf');
-                for (var i = 0; i < btt.length; i++) {
-                    btt[i].addEventListener("click", function() {
-                        var idbtns = this.id;
-                        modal();
-                        for (var j = 0; j < confi.length; j++) {
-                            confi[j].addEventListener("click", function() {
-                                var idconf = this.id;
-                                color();
-                                if (idbtns == "ava" && idconf == "confirm") {
-                                    document.querySelector('#estado').value = document.querySelector('#ava').value
-                                    $('#buttons').submit();
-                                } else if (idbtns == "unav" && idconf == "confirm") {
-                                    document.querySelector('#estado').value = document.querySelector('#unav').value
-                                    $('#buttons').submit();
-                                } else if (idbtns == "lunch" && idconf == "confirm") {
-                                    document.querySelector('#estado').value = document.querySelector('#lunch').value
-                                    $('#buttons').submit();
-
-                                } else if (idbtns == "break" && idconf == "confirm") {
-                                    document.querySelector('#estado').value = document.querySelector('#break').value
-                                    $('#buttons').submit();
-                                } else if (idbtns == "meet" && idconf == "confirm") {
-                                    document.querySelector('#estado').value = document.querySelector('#meet').value
-                                    $('#buttons').submit();
-
-                                } else if (idbtns == "coach" && idconf == "confirm") {
-                                    document.querySelector('#estado').value = document.querySelector('#coach').value
-                                    $('#buttons').submit();
-
-                                }
-                            })
-                        }
-                    })
-                }
             }
 
             function color() {
@@ -228,9 +258,6 @@
                 document.getElementById('coach').disabled = false;
             }
 
-
-
-
             const agregarCeroSiEsNecesario = valor => {
                 if (valor < 10) {
                     return "0" + valor;
@@ -247,7 +274,10 @@
                 const segundos = (milisegundos / 1000);
                 return `${agregarCeroSiEsNecesario(horas)}:${agregarCeroSiEsNecesario(minutos)}:${agregarCeroSiEsNecesario(segundos.toFixed())}`;
             };
+
             const iniciar = () => {
+                diferenciaTemporal += Number(tiempoAnterior);
+
                 const ahora = new Date();
                 tiempoInicio = new Date(ahora.getTime() - diferenciaTemporal);
                 setInterval(refrescarTiempo, 100);
@@ -262,10 +292,11 @@
             const init1 = () => {
                 $tiempoTranscurrido.textContent = "00:00:00";
             };
+
             init1;
             $btnIniciar.onclick = iniciar;
         </script>
-
+        {% endblock %}
 
     </div>
 </body>

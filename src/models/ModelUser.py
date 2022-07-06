@@ -70,7 +70,6 @@ class ModelUser():
             row = cursor.fetchone()
             if row != None:
                 Usuario=User(row[0], row[1], None, row[2],row[3],row[4],row[5],row[6])
-                #print(str(Usuario))
                 return Usuario
             else:
                 return None

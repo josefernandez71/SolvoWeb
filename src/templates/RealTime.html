@@ -1,45 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" type="text/css" href="estilos_menu.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap" rel="stylesheet">
-  <link rel="stylesheet" type"text/css" href="estilos_realT.css"> 
-  <title>Document</title>
-</head>
-<body>
-  <div id="cont">
-      <ul>
-         <li class="dropdown">
-         <a href="javascript:void(0)" class="dropbtn">opciones</a>
-         <div class="dropdown-content">
-         <a href="#">Servicio 01</a>
-         <a href="#">Servicio 02</a>
-         <a href="#">Servicio 03</a>
-         </div>
-         </li>
-         <li style="float:right"><a href="#about">Log out</a></li>
-         </ul>
-  </div>
-  <div id="contsele">
-    <h2>RTS</h2>
-  </div>  
 
-  <div id="contable">
-  <table>
-     <tr>
-	<th width="170">Solvo ID</th>
-	<th width="180">Firts Name</th>
-	<th width="170">Last Name</th>
-	<th width="180">Supervisor</th>
-	<th width="180">State</th>
-	<th width="180">Time in State</th>
-     </tr>			
-  </table>
-  </div>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="estilos_menu.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/estilos_realT.css')}}">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="cont">
+        <ul>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn">opciones</a>
+                <div class="dropdown-content">
+                    <a href="#">Servicio 01</a>
+                    <a href="#">Servicio 02</a>
+                    <a href="#">Servicio 03</a>
+                </div>
+            </li>
+            <li style="float:right"><a href="#about">Log out</a></li>
+        </ul>
+    </div>
+    <div id="contsele">
+        <h2>RTS</h2>
+    </div>
+
+    <div id="contable">
+        <table>
+            <tr>
+                <th width="170">Solvo ID</th>
+                <th width="180">Firts Name</th>
+                <th width="170">Last Name</th>
+                <th width="180">Supervisor</th>
+                <th width="180">State</th>
+                <th width="180">Time in State</th>
+            </tr>
+
+        </table>
+    </div>
 </body>
+
 </html>

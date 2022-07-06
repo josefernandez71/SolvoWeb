@@ -2,9 +2,10 @@
 
 
 #importaciones necesarias de flask
-from flask import Flask, render_template, request, redirect, url_for, flash,jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mysqldb import MySQL
 from flask_wtf.csrf import CSRFProtect
+from flask_json import FlaskJSON, JsonError, json_response, as_json
 from flask_login import LoginManager, login_user, logout_user, login_required,current_user
 
 #controlador de configuracion 
@@ -21,6 +22,7 @@ from models.entities.State import State
 
 #asignacion de variables generales 
 app = Flask(__name__)
+json = FlaskJSON(app)
 csrf = CSRFProtect()
 db = MySQL(app)
 login_manager_app = LoginManager(app)
@@ -36,7 +38,7 @@ def load_user(id):
 #ruta raiz de la pagina
 @app.route('/')
 def index():
-    return redirect(url_for('login'))
+   return redirect(url_for('login'))
 
 #Direccionamiento a pagina de pagina de administracion de usuarios 
 @app.route('/AdminUser',methods=['GET', 'POST'])
@@ -115,25 +117,39 @@ def logout():
 @login_required
 def menu():
     estadoactual=ModelState.estadoActual(db,current_user)
-    estado=ModelState.get_by_id(db,estadoactual.id_estado)
-    hola=ModelState.totalStates(db,current_user)
-    print(hola)
-    return render_template('menu.html',estadoactual=estadoactual, estado=estado)
-
+    state1=ModelState.get_by_id(db,estadoactual.id_estado)
+    totalStates=ModelState.totalStates(db,current_user)  
+    response={
+        'estado':state1.__dict__,
+        'estadoactual':estadoactual.__dict__,
+        'totalStates':totalStates
+        }  
+    
+    return render_template('menu.html',data=dict(response))
 #Cambios de estado
 @app.route('/changeState',methods=['POST'])
 def changeState():
     response=None
     if request.method == 'POST':
-        state=request.form['estado']        
+        state=request.form['estado']      
         state1=ModelState.get_by_name(db,state)
+        #print(state1)
         ModelState.call_procedure(db,current_user,current_user,state1.id)
+        
         estadoactual=ModelState.estadoActual(db,current_user)
-        state1=ModelState.get_by_id(db,estadoactual.id_estado)
+        #print(estadoactual)
+        if(estadoactual!=None):
+            state1=ModelState.get_by_id(db,estadoactual.id_estado)
+        totalStates=ModelState.totalStates(db,current_user)  
+        print(totalStates)
         response={
             'estado':state1.__dict__,
-            'estadoactual':estadoactual.__dict__}
-        return json.dumps(response)
+            'estadoactual':estadoactual.__dict__,
+            'totalStates':totalStates
+            }  
+        response=dict(response)
+        return response
+    return None
 
 #Respuestas a error por no estar autorizado para acceder a la pagina   
 def status_401(error):
@@ -150,6 +166,9 @@ if __name__ == '__main__':
     app.register_error_handler(401, status_401)
     app.register_error_handler(404, status_404)
     app.run()
+    
+    
+
 #Consulta estado actual 
 #SELECT ID_HISTORIAL,ID_INTERPRETER,ID_SOLVO,RESPONSABLE,HORA_INICIO,ID_ESTADO FROM HISTORIAL WHERE ID_INTERPRETER=2 AND TEMP_BOOLEAN=1
 #reporte y sumas 
