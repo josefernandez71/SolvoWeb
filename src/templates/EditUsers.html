@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/adduser.css')}}">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="cont">
+        <ul>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn">opciones</a>
+                <div class="dropdown-content">
+                    <a href="{{url_for('menu')}}">Servicio 01</a>
+                    <a href="#">Servicio 02</a>
+                    <a href="#">Servicio 03</a>
+                </div>
+            </li>
+            <li style="float:right"><a href="{{url_for('logout')}}">Log out</a></li>
+        </ul>
+    </div>
+    <div class="w3-container">
+        <hr>
+        <div class="w3-center">
+            <h2>Edit User</h2>
+        </div>
+                
+        {% for user in users %}
+            <form action="/Update" method="POST" id="form" class="w3-row">
+                
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="w3-row w3-container m2 ">
+                    <label for="">ID</label>
+                    <input type="text" value="{{ user [0] }}" name="userid" id="userid" readonly style="background-color: #BDB8BCB5;">
+
+                    <label for="">SOLVO ID</label>
+                    <input type="text" value="{{ user [1] }}" name="solvoid" id="solvoid" placeholder="Id Solvo">
+
+                    <label for="">FIRTS NAME</label>
+                    <input type="text" value="{{ user [2] }}" name="name" id="name" placeholder="Name">
+
+                </div>
+                <div class="w3-row w3-container m2 ">
+                    <label for="">LAST NAME</label>
+                    <input type="text" value="{{ user [3] }}" name="lastname" id="lastname" placeholder="Last Name">
+
+                    <label for="">CORP EMAIL</label>
+                    <input type="text" value="{{ user [4] }}" name="email" id="email" placeholder="Email">
+                    <br><br>
+                    <div class="w3-row w3-container m2 ">
+                        <input type="submit" value="INGRESAR" id="ingresar">
+                    </div>
+            </form>
+        {% endfor %}
+    </div>
+
+
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script>
+            $("#profile").change(function() {
+                if ($('#profile').val() == "supervisor") {
+                    $('#supervisor').prop('disabled', 'disabled');
+                } else {
+                    $('#supervisor').prop('disabled', false);
+                }
+            });
+        </script>
+
+</body>
+
+</html>

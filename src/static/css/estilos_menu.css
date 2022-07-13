@@ -59,6 +59,7 @@ li.dropdown {
     display: block;
     text-align: left;
     background: rgba(255, 255, 255, 0);
+    background-color: white;
 }
 
 .dropdown-content a:hover {

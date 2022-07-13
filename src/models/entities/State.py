@@ -4,4 +4,4 @@ class State():
         self.nombre=nombre
     
     def __repr__(self):
-       return "<id: " + str(self.id) +" estadi: " + str(self.nombre) +">"
+       return "<id: " + str(self.id) +" estado: " + str(self.nombre) +">"

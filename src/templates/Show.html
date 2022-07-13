@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/adduser.css')}}">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="cont">
+        <ul>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn">opciones</a>
+                <div class="dropdown-content">
+                    <a href="{{url_for('menu')}}">- H O M E -</a>
+                    <a href="{{url_for('AdminUser')}}">Register User</a>
+                    <a href="#">Servicio 03</a>
+                </div>
+            </li>
+            <li style="float:right"><a href="{{url_for('logout')}}">Log out</a></li>
+        </ul>
+    </div>
+
+    {% with messages = get_flashed_messages() %} {% if messages %}
+    <br /> {% for message in messages %}
+    <div class="alert alert-primary alert-dismissible" role="alert" style="text-align:center;">
+        <strong>{{ message }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %} {% endif %} {% endwith %}
+    
+    <br><br>
+    <div>
+        <table class="table table-bordered dt-responsive dataTable text-left" >
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>ID SOLVO</th>
+                    <th>NAME</th>
+                    <th>LAST NAME</th>
+                    <th>EMAIL SOLVO</th>
+                    <th>STATE</th>
+                    <th>ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{user [0]}}</td> 
+                    <td>{{user [1]}}</td>
+                    <td>{{user [2]}}</td>
+                    <td>{{user [3]}}</td>
+                    <td>{{user [4]}}</td>
+                    <td>{{user [5]}}</td>
+                    <td>  
+                        <a href="editUsers/{{user [0]}}"> EDIT </a> | 
+                        <a href="changEstate/{{user [0]}}"> 
+                            {% if user[5] == 'activo' or user[5] == 'ACTIVO' %}
+                                INACTIVE
+                            {% elif user[5] == 'inactivo' or user[5] == 'INACTIVO' %}
+                                ACTIVE
+                            {% endif %}
+                        </a>
+                    </td>
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

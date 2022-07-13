@@ -101,7 +101,7 @@ class ModelState():
                     temp=idAct
                     estado=self.get_by_id(db,idAct)
                     suma=suma=datetime.strptime("00:00:00","%H:%M:%S") 
-                else:
+                #else:
                     #print(datetime.strptime(hist.totaltime,"%H:%M:%S"))
                     #suma = suma + datetime.strptime(hist.totaltime,"%H:%M:%S") 
                 
