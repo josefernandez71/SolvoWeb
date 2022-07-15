@@ -1,16 +1,15 @@
 # Controlador principal de la pagina web
-
-
 #importaciones necesarias de flask
+
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mysqldb import MySQL
 from flask_wtf.csrf import CSRFProtect
 from flask_json import FlaskJSON, JsonError, json_response, as_json
 from flask_login import LoginManager, login_user, logout_user, login_required,current_user
+from flask_socketio import SocketIO,emit,join_room,leave_room
 
 #controlador de configuracion 
 from config import config
-import json
 
 # Models:
 from models.ModelUser import ModelUser
@@ -28,6 +27,7 @@ db = MySQL(app)
 login_manager_app = LoginManager(app)
 # settings
 app.secret_key='mysecretkey'
+socket=SocketIO(app,async_mode="threading",async_handlers=True)
 
 #Obtiene usuario en la base de datos por el Id 
 @login_manager_app.user_loader
@@ -38,7 +38,7 @@ def load_user(id):
 #ruta raiz de la pagina
 @app.route('/')
 def index():
-   return redirect(url_for('login'))
+  return redirect(url_for('login'))
 
 #Direccionamiento a pagina de pagina de administracion de usuarios 
 @app.route('/AdminUser',methods=['GET', 'POST'])
@@ -59,7 +59,7 @@ def addInterp():
             user = User(0,request.form['email'],request.form['pass'],request.form['solvoid'],request.form['name']
                     ,request.form['lastname'],"activo",request.form['supervisor'])
             logged_user = ModelUser.ExistsUser(db, user,"interpreter")   
-            Validacion     
+            #Validacion     
             #si existe el usuario, si no existe lo crea
         if logged_user != None:
             flash("exists User")
@@ -150,7 +150,12 @@ def changeState():
         response=dict(response)
         return response
     return None
-
+@app.route('/RTS',methods=['GET', 'POST'])
+def RTS():
+    if request.method == 'POST':
+        return False
+        
+    return render_template('RealTime.html')
 #Respuestas a error por no estar autorizado para acceder a la pagina   
 def status_401(error):
     return redirect(url_for('login'))
@@ -159,13 +164,53 @@ def status_401(error):
 def status_404(error):
     return "<h1>Página no encontrada</h1>", 404
 
+
+@socket.on('chat')
+def chat(message):    
+    print("chat "+str(message))
+    emit('chat', message['message'], broadcast=True, to=message['room'])
+    return True
+   
+@socket.on('join')
+def join(room):
+    username="mauro"  
+    print("Join")
+    print (room['room'])
+    join_room(room['room'])
+    emit('join', username+" se unio a la habitacion", to=room['room'])
+    
+@socket.on('leave')
+def leave(room):
+    username="mauro"   
+    print("leave")
+    leave_room(room['room'])
+    #emit('leave', username+" abandono la habitacion", to=room['room'])
+
+@socket.on('event')
+def event(json):
+    print ('estamos en evento',json)
+    #emit('event',json,broadcast=True)
+
+@socket.on('connect')
+def test_connect(auth):
+    print ("conectado")
+   # emit('my response', {'data': 'Connected'})
+
+@socket.on('disconnect')
+def test_disconnect():
+    print('Client disconnected')
+    return True
+
+
 #inicio de la pagina 
 if __name__ == '__main__':
     app.config.from_object(config['development'])
     csrf.init_app(app)
     app.register_error_handler(401, status_401)
     app.register_error_handler(404, status_404)
-    app.run()
+    app.run(debug=True)
+
+
     
     
 
