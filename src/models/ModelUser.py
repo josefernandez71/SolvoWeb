@@ -23,7 +23,7 @@ class ModelUser():
             raise Exception(ex)
         
     @classmethod
-    def ExistsUser(self, db, user,tipo):
+    def ExistsUser(self, db, user):
         try:
             cursor = db.connection.cursor()
             sql = """SELECT CORREO_SOLVO FROM usuario 
@@ -104,14 +104,24 @@ class ModelUser():
     def edit(self, db, id):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT ID_USUARIO, ID_SOLVO, NOMBRES, APELLIDOS, CORREO_SOLVO FROM usuario WHERE ID_USUARIO={}".format(id)
+            sql = "SELECT ID_USUARIO, ID_SOLVO, NOMBRES, APELLIDOS, CORREO_SOLVO, ID_SUPERVISOR FROM usuario WHERE ID_USUARIO={}".format(id)
             cursor.execute(sql)
             return cursor.fetchall()
         except Exception as ex:
             raise Exception(ex)
             
     @classmethod
-    def Update(self, db, user):
+    def UpdateInt(self, db, user):
+        try:
+            cursor = db.connection.cursor()
+            sql = "UPDATE usuario SET ID_SOLVO=%s, NOMBRES=%s, APELLIDOS=%s, CORREO_SOLVO=%s, ID_SUPERVISOR=%s WHERE ID_USUARIO=%s"
+            cursor.execute(sql,(user.id_solvo,user.nombres,user.apellidos,user.correo_solvo,user.id_supervisor,user.id))
+            db.connection.commit()
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
+    def UpdateSup(self, db, user):
         try:
             cursor = db.connection.cursor()
             sql = "UPDATE usuario SET ID_SOLVO=%s, NOMBRES=%s, APELLIDOS=%s, CORREO_SOLVO=%s WHERE ID_USUARIO=%s"

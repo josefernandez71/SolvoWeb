@@ -99,11 +99,18 @@ def editUsers(id):
 @app.route('/Update', methods=['GET', 'POST'])
 def Update():
     if request.method == 'POST':
-        user = User(request.form['userid'],request.form['email'],0,request.form['solvoid'],request.form['name']
+        if request.form['supervisorid'] != 'None':
+            user = User(request.form['userid'],request.form['email'],0,request.form['solvoid'],request.form['name']
+                ,request.form['lastname'],"activo",request.form['supervisorid'])
+            ModelUser.UpdateInt(db, user)
+            flash('User Interpreter edit successfuly')
+            return redirect(url_for('Show'))
+        else:
+            user = User(request.form['userid'],request.form['email'],0,request.form['solvoid'],request.form['name']
                 ,request.form['lastname'],"activo",0)
-        ModelUser.Update(db, user)
-        flash('User edit successfuly')
-        return redirect(url_for('Show'))
+            ModelUser.UpdateSup(db, user)
+            flash('User Supervisor edit successfuly')
+            return redirect(url_for('Show'))
     else:
         return redirect(url_for('Show'))
 

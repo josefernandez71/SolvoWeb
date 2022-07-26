@@ -51,6 +51,14 @@
 
                     <label for="">CORP EMAIL</label>
                     <input type="text" value="{{ user [4] }}" name="email" id="email" placeholder="Email">
+                    
+                    {% if user[5] != None %}
+                        <label for="">ID SUPERVISOR</label>
+                        <input type="text" value="{{ user [5] }}" name="supervisorid" id="supervisorid" placeholder="Supervisor">
+                    {% else %}
+                        <label for="">ID SUPERVISOR</label>
+                        <input type="text" value="{{ user [5] }}" name="supervisorid" id="supervisorid" placeholder="Supervisor" readonly style="background-color: #BDB8BCB5;">
+                    {% endif %}
                     <br><br>
                     <div class="w3-row w3-container m2 ">
                         <input type="submit" value="INGRESAR" id="ingresar">
