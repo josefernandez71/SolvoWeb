@@ -43,7 +43,8 @@
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="w3-row w3-container m2" style="text-align: center;">
                 <label for="">ID</label>
-                <input type="text" value="{{ company [0] }}" name="idCompany" id="idCompany" readonly>
+                <input type="text" value="{{ company [0] }}" name="idCompany" id="idCompany" readonly
+                style="color: #a3a2a2; border: 1px solid #a3a2a2; background-color: #f5f4f4; border-radius: 3px;">
 
                 <label for="nombre_compania"> COMPANY </label>
                 <input type="text" value="{{ company [1] }}" name="nombre_compania" id="nombre_compania" placeholder="NAME COMPANY"> 

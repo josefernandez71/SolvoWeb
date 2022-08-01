@@ -104,7 +104,7 @@ def editUsers(id):
 @app.route('/Update', methods=['GET', 'POST'])
 def Update():
     if request.method == 'POST':
-        if request.form['idsupervisor'] != 'None':
+        if request.form['idsupervisor'] == 'None':
             user = User(request.form['userid'],request.form['email'],0,request.form['solvoid'],request.form['name']
                 ,request.form['lastname'],request.form['compciu'],"activo",0)
             ModelUser.UpdateInt(db, user)
