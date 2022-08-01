@@ -11,6 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+
 
     <title>Menu</title>
 </head>
@@ -22,9 +24,10 @@
             <li class="dropdown">
                 <a href="javascript:void(0)" class="dropbtn">opciones</a>
                 <div class="dropdown-content">
-                    <a href="{{url_for('AdminUser')}}">Register User</a>
+                    <a href="{{url_for('menu')}}">- H O M E -</a>
                     <a href="{{url_for('Show')}}">Users List</a>
-                    <a href="#">Servicio 03</a>
+                    <a href="{{url_for('RTS')}}">RTS</a>
+                    <a href="{{url_for('ShowCompCity')}}">Company City</a>
                 </div>
             </li>
             <li style="float:right"><a href="{{url_for('logout')}}">Log out</a></li>
@@ -60,7 +63,11 @@
 
             <!--</div>-->
         </div>
-
+        <input type="text" id="holi">
+        <h1>Hola mundo</h1>
+        <button onclick="join()">Unir</button>
+        <button onclick="leave()">Abandonar</button>
+        <button onclick="sendMsj()">dame clik</button>
 
         <div id="mymodal" class="modalcont">
             <div id="modal-cont">
@@ -73,6 +80,8 @@
         </div>
         {% block javascript %}
         <script type="text/javascript">
+            var sockets = io();
+            var socket = io.connect(null, {port: 5000, rememberTransport: false});
             response = null;
             let tiempoInicio = null;
             let tiempoAnterior = 0;
@@ -110,8 +119,13 @@
                     type: 'POST',
                     response: null,
                     success: function(response) {
-                        console.log('hola', response);
+                        console.log('hola', typeof(response));
                         cambio(response);
+                        res=JSON.stringify(response)
+                        socket.emit('chat', {
+                            message: res,
+                            room: "roomhola"
+                        })
                     },
                     error: function(error) {
                         console.log(error);
@@ -180,6 +194,7 @@
 
                     }
                 }
+                
                 document.querySelector('#demo').innerHTML = esta.nombre;
                 color();
                 $btnIniciar.click();
@@ -295,6 +310,51 @@
 
             init1;
             $btnIniciar.onclick = iniciar;
+            
+        function join() {
+            socket.emit('join', {
+                room: "roomhola"
+            })
+        }
+
+        function leave() {
+            socket.emit('leave', {
+                room: "roomhola"
+            })
+        }
+
+        function sendMsj() {
+            message = document.querySelector("#holi")
+            if (message.value.trim() == "")
+                return alert("No hay mensaje que enviar")
+            socket.emit('chat', {
+                message: message.value.trim(),
+                room: "roomhola"
+            })
+            message.value = ""
+        }
+        sockets.on('connect', function() {
+            console.log('conectado');
+            sockets.on('event', function(res) {
+                document.getElementById('holi').innerHTML = res
+                console.log(res);
+            });
+        });
+        sockets.on('disconnect', function() {
+            console.log('desconectados');
+        });
+        socket.on('leave', function(message) {
+            console.log("leave " + message)
+        }),
+        socket.on('join', function(message) {
+            console.log("join " + message)
+        });
+        socket.on('chat', function(message) {
+            j=JSON.parse(message)
+            
+            console.log("chat " )
+            console.log(j['estadoactual'])
+        });
         </script>
         {% endblock %}
 

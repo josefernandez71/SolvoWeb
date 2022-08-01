@@ -18,7 +18,7 @@
                 <div class="dropdown-content">
                     <a href="{{url_for('menu')}}">- H O M E -</a>
                     <a href="{{url_for('Show')}}">Users List</a>
-                    <a href="#">Servicio 03</a>
+                    <a href="{{url_for('ShowCompCity')}}">Company City</a>
                 </div>
             </li>
             <li style="float:right"><a href="{{url_for('logout')}}">Log out</a></li>
@@ -40,14 +40,20 @@
         
         <form action="/addInterp" method="POST" id="form" class="w3-row">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <div class="w3-row w3-container m2 "><label for="solvoid">SOLVO ID</label>
+            <div class="w3-row w3-container m2 ">
+                <label for="solvoid">SOLVO ID</label>
                 <input type="text" name="solvoid" id="solvoid" placeholder="ID"> 
+
                 <label for="">FIRTS NAME</label>
                 <input type="text" name="name" id="name" placeholder="Name">
+
                 <label for="">LAST NAME</label>
-                <input type="text" name="lastname" id="lastname" placeholder="Last Name"> </div>
-            <div class="w3-row w3-container m2 "><label for="">CORP EMAIL</label>
+                <input type="text" name="lastname" id="lastname" placeholder="Last Name">
+            </div>
+            <div class="w3-row w3-container m2 ">
+                <label for="">CORP EMAIL</label>
                 <input type="text" name="email" id="email" placeholder="Email">
+
                 <label for="">SUPERVISOR</label>
                 <select type="text" name="supervisor" id="supervisor">
                 {% for sup in ListSup%}
@@ -59,15 +65,27 @@
                 <select type="text" name="profile" id="profile">
                     <option value="interpreter">Interpreter</option>
                     <option value="supervisor">Supervisor</option>
-                    
                 </select>
 
-                <div class="w3-row w3-container m2 "><label for="">PASSWORD</label>
-                    <input type="text" name="pass" id="pass" placeholder="Password"></div>
-                <div class="w3-row w3-container m2 "><input type="submit" value="INGRESAR" id="ingresar"></div>
-        </form>
+            <div class="w3-row w3-container m2 ">
+                <label for="">COMPANY CITY</label>
+                <select type="text" name="compciu" id="compciu">
+                    <option selected> SELECT </option> 
+                {% for ListCompCity in ListCompCitys%}
+                    <option name="ListCompCity" value="{{ListCompCity.0}}">{{ListCompCity.1}} {{ListCompCity.2}}</option>
+                {%endfor%}  
+                </select>
+
+                <label for="">PASSWORD</label>
+                <input type="text" name="pass" id="pass" placeholder="Password">
+            </div>
+                <br>
+            <div class="w3-row w3-container m2 ">
+                <input type="submit" value="INGRESAR" id="ingresar">
+                <input type="button" value="REGRESAR" onClick="history.go(-1);">
+            </div>
         </div>
-        </table>
+    </form>
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script>

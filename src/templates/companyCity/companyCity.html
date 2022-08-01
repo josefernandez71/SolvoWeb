@@ -18,7 +18,7 @@
                 <div class="dropdown-content">
                     <a href="{{url_for('menu')}}">- H O M E -</a>
                     <a href="{{url_for('Show')}}">Users List</a>
-                    <a href="#">Servicio 03</a>
+                    <a href="{{url_for('ShowCompCity')}}">Company City</a>
                 </div>
             </li>
             <li style="float:right"><a href="{{url_for('logout')}}">Log out</a></li>
@@ -37,46 +37,99 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         {% endfor %} {% endif %} {% endwith %}
-        
-        <div class="container">
+            
+        <div style="text-align: center;">
+            <a href="{{url_for('city')}}"> New City </a> |
+            <a href="{{url_for('company')}}"> New Company </a>
+        </div>
+        <div class="container" style="justify-content:space-around;">
             <div class="row justify-content-around">
-              <div class="col-8">
-                <table class="table table-bordered dt-responsive dataTable text-left" >
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>CITY</th>
-                            <th>ACTIONS</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for user in users %}
-                        <tr>
-                            <td>{{user [0]}}</td> 
-                            <td>{{user [1]}}</td>
-                            <td>  
-                                <a href="editUsers/{{user [0]}}"> EDIT </a> | 
-                                <a href="inactivate/{{user [0]}}"> INACTIVATE </a>
-                            </td>
-                        </tr>
-                        {%endfor%}
-                    </tbody>
-                </table>
-              </div>
+                <div class="col-5" style="margin: 1% 0.5%;">
+                    <table class="table table-bordered dt-responsive dataTable text-left" style="float: left; width: 49%;">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>CITY</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ListCity in ListCitys %}
+                            <tr>
+                                <td>{{ListCity [0]}}</td> 
+                                <td>{{ListCity [1]}}</td>
+                                <td>  
+                                    <a href="editCity/{{ListCity [0]}}"> EDIT </a> | 
+                                    <a onclick="return cofirm('Do you want to delete this City?')" href="deleteCity/{{ListCity [0]}}"> DELETE </a>
+                                </td>
+                            </tr>
+                            {%endfor%}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-5" style="margin: 1% 3%;">
+                    <table class="table table-bordered dt-responsive dataTable text-left" style="float: right; width: 49%;">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>COMPANY</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ListCompany in ListCompanys %}
+                            <tr>
+                                <td>{{ListCompany [0]}}</td> 
+                                <td>{{ListCompany [1]}}</td>
+                                <td>  
+                                    <a href="editCompany/{{ListCompany [0]}}"> EDIT </a> | 
+                                    <a onclick="return confirm('Do you want to delete this Company?')" href="deleteCompany/{{ListCompany [0]}}"> DELETE </a>
+                                </td>
+                            </tr>
+                            {%endfor%}
+                        </tbody>
+                    </table>
+                </div>
             </div>
-          </div>
+            <!-- Botón regresar para las otras páginas -->
+            <!-- <input type="button" value="Página anterior" onClick="history.go(-1);"> -->
+        </div>
     </div>
-
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-        <script>
-            $("#profile").change(function() {
-                if ($('#profile').val() == "supervisor") {
-                    $('#supervisor').prop('disabled', 'disabled');
-                } else {
-                    $('#supervisor').prop('disabled', false);
-                }
-            });
-        </script>
+    <div style="margin: 2% 4% 1% 4%;">
+        <a href="{{url_for('addCompanyCity')}}"> New Company and City </a>
+    </div>
+    
+    <div class="w3-container" style="margin: 0% 3%;">
+        <div class="container" style="justify-content:space-around; ">
+            <div class="row justify-content-around">
+                <div class="col-12">
+                    <table class="table table-bordered dt-responsive dataTable text-left" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>CITY</th>
+                                <th>COMPANY</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for CompCity in CompCitys %}
+                            <tr>
+                                <td>{{CompCity [0]}}</td> 
+                                <td>{{CompCity [1]}}</td>
+                                <td>{{CompCity [2]}}</td>
+                                <td>  
+                                    <a href="editCompanyCity/{{CompCity [0]}}"> EDIT </a> | 
+                                    <a onclick="return confirm('Do you want to delete this related of Company and City?')" href="deleteCompanyCity/{{CompCity [0]}}"> DELETE </a>
+                                </td>
+                            </tr>
+                            {%endfor%}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

@@ -5,11 +5,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="estilos_menu.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{url_for('static',filename='css/estilos_realT.css')}}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+
     <title>Document</title>
 </head>
 
@@ -19,9 +20,9 @@
             <li class="dropdown">
                 <a href="javascript:void(0)" class="dropbtn">opciones</a>
                 <div class="dropdown-content">
-                    <a href="#">Servicio 01</a>
-                    <a href="#">Servicio 02</a>
-                    <a href="#">Servicio 03</a>
+                    <a href="{{url_for('menu')}}">- H O M E -</a>
+                    <a href="{{url_for('Show')}}">Users List</a>
+                    <a href="{{url_for('ShowCompCity')}}">Company City</a>
                 </div>
             </li>
             <li style="float:right"><a href="#about">Log out</a></li>
@@ -32,7 +33,7 @@
     </div>
 
     <div id="contable">
-        <table>
+        <table id="tabla_estados">
             <tr>
                 <th width="170">Solvo ID</th>
                 <th width="180">Firts Name</th>
@@ -44,6 +45,97 @@
 
         </table>
     </div>
+    <input type="text" id="holi">
+        <h1>Hola mundo</h1>
+        <button onclick="join()">Unir</button>
+        <button onclick="leave()">Abandonar</button>
+        <button onclick="sendMsj()">dame clik</button>
+    <script>
+        var sockets = io();
+        var socket = io.connect(null, {port: 5000, rememberTransport: false});
+        function join() {
+            socket.emit('join', {
+                room: "roomhola"
+            })
+        }
+
+        function leave() {
+            socket.emit('leave', {
+                room: "roomhola"
+            })
+        }
+
+        function sendMsj() {
+            message = document.querySelector("#holi")
+            if (message.value.trim() == "")
+                return alert("No hay mensaje que enviar")
+            socket.emit('chat', {
+                message: message.value.trim(),
+                room: "roomhola"
+            })
+            message.value = ""
+        }
+        sockets.on('connect', function() {
+            console.log('conectado');
+            socket.emit('join', {
+                room: "roomhola"
+            })
+            sockets.on('event', function(res) {
+                document.getElementById('holi').innerHTML = res
+                console.log(res);
+            });
+        });
+        sockets.on('disconnect', function() {
+            console.log('desconectados');
+        });
+        socket.on('leave', function(message) {
+            console.log("leave " + message)
+        }),
+        socket.on('join', function(message) {
+            console.log("join " + message)
+        });
+        socket.on('chat', function(message) {
+            j=JSON.parse(message)
+            console.log(message);
+            user=j['estadoactual']['user']
+            estado=j['estado']
+            if(!!document.getElementById(String(user['id']))){
+                usuario_existe(user,estado);
+            }else{
+                aggregar_fila(user,estado);
+            }
+            
+
+        });
+        function usuario_existe(user,estado){
+            console.log('actualizando');
+            
+            let row=document.getElementById(String(user['id']));
+            row.style.color="red";
+            console.log(row);
+            row.cells.item(4).innerHTML=estado['nombre'];
+            return true
+        }
+        function aggregar_fila(user,estado){
+            console.log('agregando fila')
+            let tabla=document.getElementById('tabla_estados');
+            let new_row=tabla.insertRow(-1);
+            new_row.setAttribute("id",user['id']);
+            let new_cellis=new_row.insertCell(0)
+            new_cellis.textContent=user['id_solvo']
+            let new_cellnombre=new_row.insertCell(1)
+            new_cellnombre.textContent=user['nombres']
+            let new_celapellido=new_row.insertCell(2)
+            new_celapellido.textContent=user['apellidos']
+            let new_celsuper=new_row.insertCell(3)
+            new_celsuper.textContent=user['id_supervisor']
+            let new_celestado=new_row.insertCell(4)
+            new_celestado.textContent=estado['nombre']
+            let new_celtime=new_row.insertCell(5)
+            new_celtime.textContent=estado['id']
+        }
+
+    </script>
 </body>
 
 </html>

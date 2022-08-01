@@ -17,7 +17,7 @@
                 <a href="javascript:void(0)" class="dropbtn">opciones</a>
                 <div class="dropdown-content">
                     <a href="{{url_for('menu')}}">- H O M E -</a>
-                    <a href="{{url_for('AdminUser')}}">Register User</a>
+                    <a href="{{url_for('Show')}}">Users List</a>
                     <a href="#">Servicio 03</a>
                 </div>
             </li>
@@ -32,6 +32,10 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     {% endfor %} {% endif %} {% endwith %}
+
+    <div style="text-align: center; padding-top: 2%;">
+        <a href="{{url_for('AdminUser')}}">Register User</a>
+    </div>
     
     <br><br>
     <div>
@@ -57,14 +61,14 @@
                     <td>{{user [4]}}</td>
                     <td>{{user [5]}}</td>
                     <td>  
-                        <a href="editUsers/{{user [0]}}"> EDIT </a> | 
-                        <a href="changEstate/{{user [0]}}"> 
+                        <a href="editUsers/{{user [0]}}"> EDIT </a> 
+                        <!-- <a href="changEstate/{{user [0]}}"> 
                             {% if user[5] == 'activo' or user[5] == 'ACTIVO' %}
                                 INACTIVE
                             {% elif user[5] == 'inactivo' or user[5] == 'INACTIVO' %}
                                 ACTIVE
                             {% endif %}
-                        </a>
+                        </a> -->
                     </td>
                 </tr>
                 {%endfor%}

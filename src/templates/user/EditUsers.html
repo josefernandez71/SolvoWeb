@@ -16,8 +16,8 @@
             <li class="dropdown">
                 <a href="javascript:void(0)" class="dropbtn">opciones</a>
                 <div class="dropdown-content">
-                    <a href="{{url_for('menu')}}">Servicio 01</a>
-                    <a href="#">Servicio 02</a>
+                    <a href="{{url_for('menu')}}">- H O M E -</a>
+                    <a href="{{url_for('Show')}}">Users List</a>
                     <a href="#">Servicio 03</a>
                 </div>
             </li>
@@ -36,49 +36,50 @@
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="w3-row w3-container m2 ">
                     <label for="">ID</label>
-                    <input type="text" value="{{ user [0] }}" name="userid" id="userid" readonly style="background-color: #BDB8BCB5;">
+                    <input type="number" name="userid" id="userid" value="{{ user [0] }}"  readonly>
 
                     <label for="">SOLVO ID</label>
-                    <input type="text" value="{{ user [1] }}" name="solvoid" id="solvoid" placeholder="Id Solvo">
+                    <input type="text" name="solvoid" id="solvoid" value="{{ user [1] }}" placeholder="Id Solvo">
 
                     <label for="">FIRTS NAME</label>
-                    <input type="text" value="{{ user [2] }}" name="name" id="name" placeholder="Name">
-
+                    <input type="text" name="name" id="name" value="{{ user [2] }}" placeholder="Name">
                 </div>
                 <div class="w3-row w3-container m2 ">
                     <label for="">LAST NAME</label>
-                    <input type="text" value="{{ user [3] }}" name="lastname" id="lastname" placeholder="Last Name">
+                    <input type="text" name="lastname" id="lastname" value="{{ user [3] }}" placeholder="Last Name">
 
                     <label for="">CORP EMAIL</label>
-                    <input type="text" value="{{ user [4] }}" name="email" id="email" placeholder="Email">
+                    <input type="text" name="email" id="email" value="{{ user [4] }}" placeholder="Email">
                     
-                    {% if user[5] != None %}
+                    {% if user [5]  != None %}
                         <label for="">ID SUPERVISOR</label>
-                        <input type="text" value="{{ user [5] }}" name="supervisorid" id="supervisorid" placeholder="Supervisor">
+                        <input type="text" name="idsupervisor" id="idsupervisor" value="{{ user [5] }}" placeholder="Supervisor">
                     {% else %}
                         <label for="">ID SUPERVISOR</label>
-                        <input type="text" value="{{ user [5] }}" name="supervisorid" id="supervisorid" placeholder="Supervisor" readonly style="background-color: #BDB8BCB5;">
+                        <input type="text" name="idsupervisor" id="idsupervisor" value="{{ user [5] }}" placeholder="Supervisor" readonly>
                     {% endif %}
                     <br><br>
-                    <div class="w3-row w3-container m2 ">
-                        <input type="submit" value="INGRESAR" id="ingresar">
-                    </div>
+                <div class="w3-row w3-container m2 ">
+                    <label for="">COMPANY CITY</label>
+                    <select type="text" name="compciu" id="compciu">
+                        <option> SELECT </option>
+                    {% for ListCompCity in ListCompCitys%}
+                        {% if ListCompCity.0 == user [6] %}
+                            <option name="ListCompCity" value="{{ListCompCity.0}}" selected>{{ListCompCity.2}} {{ListCompCity.1}}</option>
+                        {% else %}
+                            <option name="ListCompCity" value="{{ListCompCity.0}}" >{{ListCompCity.2}} {{ListCompCity.1}}</option>
+                        {% endif %}
+                    {%endfor%}  
+                    </select>
+
+                    <input type="submit" value="ACTUALIZAR" id="actualizar">
+                    <input type="button" value="REGRESAR" onClick="history.go(-1);">
+                </div>
             </form>
         {% endfor %}
     </div>
 
-
-
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-        <script>
-            $("#profile").change(function() {
-                if ($('#profile').val() == "supervisor") {
-                    $('#supervisor').prop('disabled', 'disabled');
-                } else {
-                    $('#supervisor').prop('disabled', false);
-                }
-            });
-        </script>
+    
 
 </body>
 
