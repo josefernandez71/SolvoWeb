@@ -417,53 +417,9 @@ if __name__ == '__main__':
     app.register_error_handler(401, status_401)
     app.register_error_handler(404, status_404)
     app.run(debug=True)
-
-
-    
     
 
 #Consulta estado actual 
 #SELECT ID_HISTORIAL,ID_INTERPRETER,ID_SOLVO,RESPONSABLE,HORA_INICIO,ID_ESTADO FROM HISTORIAL WHERE ID_INTERPRETER=2 AND TEMP_BOOLEAN=1
 #reporte y sumas 
 #SELECT * FROM historial where HORA_INICIO like '%2022-06-13%' and HORA_FINAL <> 'null' order by id_estado ;
-
-
-
-# @app.route('/EditUsers/<int:id>',methods=['GET', 'POST'])
-# def EditUsers(id):
-#     if request.method == 'POST':
-#         if request.form['profile']=="supervisor":
-#             user = User(0,request.form['email'],request.form['pass'],request.form['solvoid'],request.form['name']
-#                     ,request.form['lastname'],"activo",0)
-#             #Validacion si exite el supervisor
-#             logged_user = ModelUser.ExistsUser(db, user,"supervisor")                
-#         elif request.form['profile']=="interpreter":
-#             user = User(0,request.form['email'],request.form['pass'],request.form['solvoid'],request.form['name']
-#                     ,request.form['lastname'],"activo",request.form['supervisor'])
-#             logged_user = ModelUser.ExistsUser(db, user,"interpreter")    
-#             #si existe el usuario, si no existe lo crea
-#         if logged_user != None:
-#             flash("exists User")
-#             return render_template('EditUsers.html')
-#         else:
-#             #valida si el desea crear supervisor o interprete
-#             if request.form['profile']=="supervisor":
-#                 #crea el supervisor
-#                 ModelUser.addSup(db, user) 
-#                 #envia mensaje de confirmacion
-#                 flash('Supervisor created successfully')             
-#                 return render_template('Show.html')
-#             elif request.form['profile']=="interpreter":
-#                 #Crea interprete 
-#                 ModelUser.addInterp(db, user)
-#                 #confirma envia mensaje de confirmacion
-#                 flash('Interpreter created successfully ')
-#                 return render_template('Show.html')            
-#             return render_template('EditUsers.html')
-#     else:
-#         return redirect(url_for('EditUsers.html'))
-
-# @app.route('/inactivate/<int:id>', method='GET')
-# def inactivate(id):
-#     return render_template('Show.html', users=ModelUser.inactivate(db, User.id))
-
