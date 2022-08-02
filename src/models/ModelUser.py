@@ -79,7 +79,7 @@ class ModelUser():
     def ListSup(self,db):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT id_supervisor, NOMBRES FROM usuario "
+            sql = "SELECT ID_USUARIO, NOMBRES, APELLIDOS FROM usuario WHERE id_supervisor is null"
             cursor.execute(sql)
             return cursor.fetchall()
         except Exception as ex:

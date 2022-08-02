@@ -53,10 +53,18 @@
                     <input type="text" name="email" id="email" value="{{ user [4] }}" placeholder="Email">
                     
                     {% if user [5]  != None %}
-                        <label for="">ID SUPERVISOR</label>
-                        <input type="text" name="idsupervisor" id="idsupervisor" value="{{ user [5] }}" placeholder="Supervisor">
+                        <label for="">SUPERVISOR</label>
+                        <select type="text" name="supervisor" id="supervisor">
+                        {% for sup in ListSup%}
+                            {% if sup.0 == user [5] %}
+                                <option name="sup" value="{{sup.0}}" selected>{{sup.1}} {{sup.2}}</option>
+                            {% else %}
+                                <option name="sup" value="{{sup.0}}">{{sup.1}} {{sup.2}}</option>
+                            {% endif %}
+                        {%endfor%}  
+                        </select>
                     {% else %}
-                        <label for="">ID SUPERVISOR</label>
+                        <label for="">SUPERVISOR</label>
                         <input type="text" name="idsupervisor" id="idsupervisor" value="{{ user [5] }}" placeholder="Supervisor" readonly
                         style="color: #a3a2a2; border: 1px solid #a3a2a2; background-color: #f5f4f4; border-radius: 3px;">
                     {% endif %}

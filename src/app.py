@@ -97,8 +97,9 @@ def addInterp():
 @app.route('/editUsers/<int:id>', methods=['GET', 'POST'])
 def editUsers(id):
     users = ModelUser.edit(db, id)
+    ListSup=ModelUser.ListSup(db)
     ListCompCitys = ModelUser.CompanyCity(db)
-    return render_template('user/EditUsers.html', ListCompCitys=ListCompCitys, users=users)
+    return render_template('user/EditUsers.html', ListCompCitys=ListCompCitys, ListSup=ListSup, users=users)
     
 #Edita el usuario seleccionado en la vista
 @app.route('/Update', methods=['GET', 'POST'])
