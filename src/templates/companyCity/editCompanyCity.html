@@ -48,7 +48,6 @@
 
                     <label for="">COMPANY</label>
                     <select type="text" name="company" id="company">
-                        <option>{{ companyCity [1]}}</option>
                     {% for Company in Companys%}
                         {% if Company.0 == companyCity[1] %}
                             <option name="company" value="{{Company.0}}" selected>{{Company.1}}</option>
@@ -60,7 +59,6 @@
 
                     <label for="">CITY</label>
                     <select type="text" name="city" id="city">
-                        <option>{{ companyCity [2]}}</option>
                     {% for City in Citys%}
                         {% if City.0 == companyCity [2] %}
                             <option name="city" value="{{City.0}}" selected>{{City.1}}</option>
