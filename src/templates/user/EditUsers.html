@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/adduser.css')}}">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="cont">
+        <ul>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn">opciones</a>
+                <div class="dropdown-content">
+                    <a href="{{url_for('menu')}}">- H O M E -</a>
+                    <a href="{{url_for('Show')}}">Users List</a>
+                    <a href="#">Servicio 03</a>
+                </div>
+            </li>
+            <li style="float:right"><a href="{{url_for('logout')}}">Log out</a></li>
+        </ul>
+    </div>
+    <div class="w3-container">
+        <hr>
+        <div class="w3-center">
+            <h2>Edit User</h2>
+        </div>
+                
+        {% for user in users %}
+            <form action="/Update" method="POST" id="form" class="w3-row">
+                
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="w3-row w3-container m2 ">
+                    <label for="">ID</label>
+                    <input type="number" name="userid" id="userid" value="{{ user [0] }}"  readonly
+                    style="color: #a3a2a2; border: 1px solid #a3a2a2; background-color: #f5f4f4; border-radius: 3px;">
+
+                    <label for="">SOLVO ID</label>
+                    <input type="text" name="solvoid" id="solvoid" value="{{ user [1] }}" placeholder="Id Solvo">
+
+                    <label for="">FIRTS NAME</label>
+                    <input type="text" name="name" id="name" value="{{ user [2] }}" placeholder="Name">
+                </div>
+                <div class="w3-row w3-container m2 ">
+                    <label for="">LAST NAME</label>
+                    <input type="text" name="lastname" id="lastname" value="{{ user [3] }}" placeholder="Last Name">
+
+                    <label for="">CORP EMAIL</label>
+                    <input type="text" name="email" id="email" value="{{ user [4] }}" placeholder="Email">
+                    
+                    {% if user [5]  != None %}
+                        <label for="">SUPERVISOR</label>
+                        <select type="text" name="supervisor" id="supervisor">
+                        {% for sup in ListSup%}
+                            {% if sup.0 == user [5] %}
+                                <option name="sup" value="{{sup.0}}" selected>{{sup.1}} {{sup.2}}</option>
+                            {% else %}
+                                <option name="sup" value="{{sup.0}}">{{sup.1}} {{sup.2}}</option>
+                            {% endif %}
+                        {%endfor%}  
+                        </select>
+                    {% else %}
+                        <label for="">SUPERVISOR</label>
+                        <input type="text" name="idsupervisor" id="idsupervisor" value="{{ user [5] }}" placeholder="Supervisor" readonly
+                        style="color: #a3a2a2; border: 1px solid #a3a2a2; background-color: #f5f4f4; border-radius: 3px;">
+                    {% endif %}
+                    <br><br>
+                <div class="w3-row w3-container m2 ">
+                    <label for="">COMPANY CITY</label>
+                    <select type="text" name="compciu" id="compciu">
+                        <option> SELECT </option>
+                    {% for ListCompCity in ListCompCitys%}
+                        {% if ListCompCity.0 == user [6] %}
+                            <option name="ListCompCity" value="{{ListCompCity.0}}" selected>{{ListCompCity.2}} {{ListCompCity.1}}</option>
+                        {% else %}
+                            <option name="ListCompCity" value="{{ListCompCity.0}}" >{{ListCompCity.2}} {{ListCompCity.1}}</option>
+                        {% endif %}
+                    {%endfor%}  
+                    </select>
+
+                    <input type="submit" value="ACTUALIZAR" id="actualizar">
+                    <input type="button" value="REGRESAR" onClick="history.go(-1);">
+                </div>
+            </form>
+        {% endfor %}
+    </div>
+
+    
+
+</body>
+
+</html>

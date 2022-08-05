@@ -44,11 +44,14 @@ li.dropdown {
     display: block;
     text-align: left;
     background: rgba(255, 255,255, 0);
-    }
-    .dropdown-content a:hover {
+    background-color: white;
+}
+
+.dropdown-content a:hover {
     background-color: #585858;
-    }
-    .dropdown:hover .dropdown-content {
+}
+
+.dropdown:hover .dropdown-content {
     display: block;
 }
 
@@ -67,4 +70,15 @@ li.dropdown {
 }
 .w3-container{
     margin-left: 50px;
+}
+
+table{
+    margin: 0 auto;
+    border-collapse: collapse;
+    width: 80%;
+}
+
+table,th,td{
+    border: 1px solid black;
+    text-align: center;
 }

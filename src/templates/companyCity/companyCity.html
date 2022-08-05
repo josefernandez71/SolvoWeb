@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/adduser.css')}}">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="cont">
+        <ul>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn">opciones</a>
+                <div class="dropdown-content">
+                    <a href="{{url_for('menu')}}">- H O M E -</a>
+                    <a href="{{url_for('Show')}}">Users List</a>
+                    <a href="{{url_for('ShowCompCity')}}">Company City</a>
+                </div>
+            </li>
+            <li style="float:right"><a href="{{url_for('logout')}}">Log out</a></li>
+        </ul>
+    </div>
+    <div class="w3-container">
+        <hr>
+        <div class="w3-center">
+            <h2>Add Company and city</h2>
+        </div>
+
+        {% with messages = get_flashed_messages() %} {% if messages %}
+        <br /> {% for message in messages %}
+        <div class="alert alert-primary alert-dismissible" role="alert">
+            <strong>{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %} {% endif %} {% endwith %}
+            
+        <div style="text-align: center;">
+            <a href="{{url_for('city')}}"> New City </a> |
+            <a href="{{url_for('company')}}"> New Company </a>
+        </div>
+        <div class="container" style="justify-content:space-around;">
+            <div class="row justify-content-around">
+                <div class="col-5" style="margin: 1% 0.5%;">
+                    <table class="table table-bordered dt-responsive dataTable text-left" style="float: left; width: 49%;">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>CITY</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ListCity in ListCitys %}
+                            <tr>
+                                <td>{{ListCity [0]}}</td> 
+                                <td>{{ListCity [1]}}</td>
+                                <td>  
+                                    <a href="editCity/{{ListCity [0]}}"> EDIT </a> | 
+                                    <a onclick="return cofirm('Do you want to delete this City?')" href="deleteCity/{{ListCity [0]}}"> DELETE </a>
+                                </td>
+                            </tr>
+                            {%endfor%}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-5" style="margin: 1% 3%;">
+                    <table class="table table-bordered dt-responsive dataTable text-left" style="float: right; width: 49%;">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>COMPANY</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ListCompany in ListCompanys %}
+                            <tr>
+                                <td>{{ListCompany [0]}}</td> 
+                                <td>{{ListCompany [1]}}</td>
+                                <td>  
+                                    <a href="editCompany/{{ListCompany [0]}}"> EDIT </a> | 
+                                    <a onclick="return confirm('Do you want to delete this Company?')" href="deleteCompany/{{ListCompany [0]}}"> DELETE </a>
+                                </td>
+                            </tr>
+                            {%endfor%}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Botón regresar para las otras páginas -->
+            <!-- <input type="button" value="Página anterior" onClick="history.go(-1);"> -->
+        </div>
+    </div>
+    <div style="margin: 2% 4% 1% 4%;">
+        <a href="{{url_for('addCompanyCity')}}"> New Company and City </a>
+    </div>
+    
+    <div class="w3-container" style="margin: 0% 3%;">
+        <div class="container" style="justify-content:space-around; ">
+            <div class="row justify-content-around">
+                <div class="col-12">
+                    <table class="table table-bordered dt-responsive dataTable text-left" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>CITY</th>
+                                <th>COMPANY</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for CompCity in CompCitys %}
+                            <tr>
+                                <td>{{CompCity [0]}}</td> 
+                                <td>{{CompCity [1]}}</td>
+                                <td>{{CompCity [2]}}</td>
+                                <td>  
+                                    <a href="editCompanyCity/{{CompCity [0]}}"> EDIT </a> | 
+                                    <a onclick="return confirm('Do you want to delete this related of Company and City?')" href="deleteCompanyCity/{{CompCity [0]}}"> DELETE </a>
+                                </td>
+                            </tr>
+                            {%endfor%}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

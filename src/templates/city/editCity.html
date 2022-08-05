@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/adduser.css')}}">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="cont">
+        <ul>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn">opciones</a>
+                <div class="dropdown-content">
+                    <a href="{{url_for('menu')}}">- H O M E -</a>
+                    <a href="{{url_for('Show')}}">Users List</a>
+                    <a href="{{url_for('ShowCompCity')}}">Company City</a>
+                </div>
+            </li>
+            <li style="float:right"><a href="{{url_for('logout')}}">Log out</a></li>
+        </ul>
+    </div>
+    <div class="w3-container">
+        <hr>
+        <div class="w3-center">
+            <h2>Edit city</h2>
+        </div>
+
+        {% with messages = get_flashed_messages() %} {% if messages %}
+        <br /> {% for message in messages %}
+        <div class="alert alert-primary alert-dismissible" role="alert">
+            <strong>{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %} {% endif %} {% endwith %}
+        
+        {% for city in citys %}
+            <form action="/updaCity" method="POST" id="form" class="w3-row">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="w3-row w3-container m2" style="text-align: center;">
+                    <label for="">ID</label>
+                    <input type="text" name="idCity" id="idCity" value="{{ city [0] }}"  readonly
+                    style="color: #a3a2a2; border: 1px solid #a3a2a2; background-color: #f5f4f4; border-radius: 3px;">
+
+                    <label for="nombre_ciudad"> CITY </label>
+                    <input type="text" name="nombre_ciudad" id="nombre_ciudad" value="{{ city [1] }}" placeholder="NAME CITY"> 
+                    <br><br>
+                    <div class="w3-row w3-container m2 ">
+                        <input type="submit" value="SAVE" id="save">
+                        <input type="button" value="REGRESAR" onClick="history.go(-1);">
+                    </div>
+                </div>
+            </form>
+        {% endfor %}
+    </div>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        
+</body>
+
+</html>
