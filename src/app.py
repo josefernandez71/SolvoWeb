@@ -7,6 +7,7 @@ from flask_wtf.csrf import CSRFProtect
 from flask_json import FlaskJSON, JsonError, json_response, as_json
 from flask_login import LoginManager, login_user, logout_user, login_required,current_user
 from flask_socketio import SocketIO,emit,join_room,leave_room
+from flask_cors import CORS
 
 #controlador de configuracion 
 from config import config
@@ -21,12 +22,17 @@ from models.entities.State import State
 
 #asignacion de variables generales 
 app = Flask(__name__)
+app.secret_key='mysecretkey'
+app.config['MYSQL_HOST']='localhost'
+app.config['MYSQL_USER']='root'
+app.config['MYSQL_PASSWORD']=''
+app.config['MYSQL_DB']='solvo'
+CORS(app)
 json = FlaskJSON(app)
-csrf = CSRFProtect()
+csrf = CSRFProtect(app)
 db = MySQL(app)
 login_manager_app = LoginManager(app)
 # settings
-app.secret_key='mysecretkey'
 socket=SocketIO(app,async_mode="threading",async_handlers=True)
 
 #Obtiene usuario en la base de datos por el Id 
@@ -152,9 +158,7 @@ def changeState():
     return None
 @app.route('/RTS',methods=['GET', 'POST'])
 def RTS():
-    if request.method == 'POST':
-        return False
-        
+    
     return render_template('RealTime.html')
 #Respuestas a error por no estar autorizado para acceder a la pagina   
 def status_401(error):
@@ -203,12 +207,12 @@ def test_disconnect():
 
 
 #inicio de la pagina 
-if __name__ == '__main__':
-    app.config.from_object(config['development'])
-    csrf.init_app(app)
-    app.register_error_handler(401, status_401)
-    app.register_error_handler(404, status_404)
-    app.run(debug=True)
+#if __name__ == '__main__':
+#    app.config.from_object(config['development'])
+#    #csrf.init_app(app)
+#    app.register_error_handler(401, status_401)
+#    app.register_error_handler(404, status_404)
+#    app.run(debug=True)
 
 
     

@@ -1,2 +1,4 @@
 venv/
-models/_pycache__/
+src/__pycache__/
+src/models/__pycache__/
+src/models/entities/__pycache__/
