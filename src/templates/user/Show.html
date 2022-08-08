@@ -61,7 +61,7 @@
                     <td>{{user [4]}}</td>
                     <td>{{user [5]}}</td>
                     <td>  
-                        <a href="editUsers/{{user [0]}}"> EDIT </a> 
+                        <a href="editUsers/{{user [0]}}"> EDIT </a> ||
                         <!-- <a href="changEstate/{{user [0]}}"> 
                             {% if user[5] == 'activo' or user[5] == 'ACTIVO' %}
                                 INACTIVE
@@ -69,6 +69,7 @@
                                 ACTIVE
                             {% endif %}
                         </a> -->
+                        <a href="ShowUser//{{user [0]}}">VIEW</a>
                     </td>
                 </tr>
                 {%endfor%}

@@ -44,30 +44,49 @@
                 <label for="solvoid">SOLVO ID</label>
                 <input type="text" name="solvoid" id="solvoid" placeholder="ID"> 
 
-                <label for="">FIRTS NAME</label>
+                <label for="name">FIRTS NAME</label>
                 <input type="text" name="name" id="name" placeholder="Name">
 
-                <label for="">LAST NAME</label>
+                <label for="lastname">LAST NAME</label>
                 <input type="text" name="lastname" id="lastname" placeholder="Last Name">
             </div>
             <div class="w3-row w3-container m2 ">
-                <label for="">CORP EMAIL</label>
+                <label for="email">CORP EMAIL</label>
                 <input type="text" name="email" id="email" placeholder="Email">
 
-                <label for="">SUPERVISOR</label>
+                <label for="perfil">PERFIL</label>
+                <select type="text" name="perfil" id="perfil">
+                    <option selected> SELECT </option> 
+                {% for perfil in ListPerfil%}
+                    <option name="perfil" value="{{perfil.0}}">{{perfil.1}}</option>
+                {%endfor%}  
+                </select>
+
+                <label for="administrator">ADMINISTRATOR</label>
+                <select type="text" name="administrator" id="administrator">
+                    <option> SELECT </option>
+                {% for administrator in ListAdmin%}
+                    <option name="administrator" value="{{administrator.0}}">{{administrator.1}} {{administrator.2}}</option>
+                {%endfor%}  
+                </select>
+            </div>
+            <div class="w3-row w3-container m2 ">
+                <label for="supervisor">SUPERVISOR</label>
                 <select type="text" name="supervisor" id="supervisor">
+                    <option> SELECT </option>
                 {% for sup in ListSup%}
                     <option name="sup" value="{{sup.0}}">{{sup.1}} {{sup.2}}</option>
                 {%endfor%}  
                 </select>
-
-                <label for="">PROFILE</label>
-                <select type="text" name="profile" id="profile">
-                    <option value="interpreter">Interpreter</option>
-                    <option value="supervisor">Supervisor</option>
+                
+                <label for="teamleader">TEAM LEADER</label>
+                <select type="text" name="teamleader" id="teamleader">
+                    <option selected> SELECT </option> 
+                {% for teamleader in ListTeam%}
+                    <option name="teamleader" value="{{teamleader.0}}">{{teamleader.1}}</option>
+                {%endfor%}  
                 </select>
 
-            <div class="w3-row w3-container m2 ">
                 <label for="">COMPANY CITY</label>
                 <select type="text" name="compciu" id="compciu">
                     <option selected> SELECT </option> 
@@ -75,26 +94,92 @@
                     <option name="ListCompCity" value="{{ListCompCity.0}}">{{ListCompCity.1}} {{ListCompCity.2}}</option>
                 {%endfor%}  
                 </select>
-
+            </div>
+            <div class="w3-row w3-container m2 ">
                 <label for="">PASSWORD</label>
                 <input type="text" name="pass" id="pass" placeholder="Password">
-            </div>
-                <br>
-            <div class="w3-row w3-container m2 ">
-                <input type="submit" value="INGRESAR" id="ingresar">
-                <input type="button" value="REGRESAR" onClick="history.go(-1);">
+            
+                <br><br><br>
+                <div style="padding-left: 10%;">
+                    <input type="submit" value="INGRESAR" id="ingresar">
+                    <input type="button" value="REGRESAR" onClick="history.go(-1);">
+                </div>
             </div>
         </div>
     </form>
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script>
-            $("#profile").change(function() {
-                if ($('#profile').val() == "supervisor") {
-                    $('#supervisor').prop('disabled', 'disabled');
-                } else {
-                    $('#supervisor').prop('disabled', false);
+            $("#perfil").change(function() {
+                
+                switch ($('#perfil').val()) {
+                    case "1":
+                        $('#administrator').prop('disabled', 'disabled');
+                        $('#supervisor').prop('disabled', 'disabled');
+                        $('#teamleader').prop('disabled', 'disabled');
+                        break;
+                
+                    case "2":
+                        $('#supervisor').prop('disabled', 'disabled');
+                        $('#teamleader').prop('disabled', 'disabled');
+                        $('#administrator').prop('disabled', false);
+                        break;
+
+                    case "3":
+                        $('#administrator').prop('disabled', 'disabled');
+                        $('#teamleader').prop('disabled', 'disabled');
+                        $('#supervisor').prop('disabled', false);
+                        break;
+
+                    case "4": 
+                        $('#administrator').prop('disabled', 'disabled');
+                        $('#supervisor').prop('disabled', 'disabled');
+                        $('#teamleader').prop('disabled', false);
+                        break;
+
+                    default:
+                        $('#administrator').prop('disabled', false);
+                        $('#supervisor').prop('disabled', false);
+                        $('#teamleader').prop('disabled', false);  
+                        break;
                 }
+            
+            //     if ($('#perfil').val() == "1") {
+            //         $('#administrator').prop('disabled', 'disabled');
+            //         $('#supervisor').prop('disabled', 'disabled');
+            //         $('#teamleader').prop('disabled', 'disabled');
+            //     } else {
+            //         $('#administrator').prop('disabled', false);
+            //         $('#supervisor').prop('disabled', false);
+            //         $('#teamleader').prop('disabled', false);
+            //     }
+
+            //     if ($('#perfil').val() == "2") {
+            //         $('#supervisor').prop('disabled', 'disabled');
+            //         $('#teamleader').prop('disabled', 'disabled');            
+            //     } else {
+            //         $('#administrator').prop('disabled', false);
+            //         $('#supervisor').prop('disabled', false);
+            //         $('#teamleader').prop('disabled', false);
+            //     }
+
+            //     if ($('#perfil').val() == "3") {
+            //         $('#administrator').prop('disabled', 'disabled');
+            //         $('#teamleader').prop('disabled', 'disabled');
+            //     } else {
+            //         $('#administrator').prop('disabled', false);
+            //         $('#supervisor').prop('disabled', false);
+            //         $('#teamleader').prop('disabled', false);
+            //     }
+
+            //     if ($('#perfil').val() == "4") {
+            //         $('#administrator').prop('disabled', 'disabled');
+            //         $('#supervisor').prop('disabled', 'disabled');
+            //     } else {
+            //         $('#administrator').prop('disabled', false);
+            //         $('#supervisor').prop('disabled', false);
+            //         $('#teamleader').prop('disabled', false);
+            //     }
             });
         </script>
 

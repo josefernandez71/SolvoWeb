@@ -1,6 +1,7 @@
 # Controlador principal de la pagina web
 #importaciones necesarias de flask
 
+from ast import Mod
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mysqldb import MySQL
 from flask_wtf.csrf import CSRFProtect
@@ -49,8 +50,11 @@ def index():
 @login_required
 def AdminUser():
     ListSup=ModelUser.ListSup(db)
+    ListAdmin=ModelUser.ListAdmin(db)
+    ListTeam=ModelUser.ListTeam(db)
+    ListPerfil=ModelUser.perfil(db)
     ListCompCitys=ModelUser.CompanyCity(db)
-    return render_template('user/AddUsers.html', ListSup=ListSup, ListCompCitys=ListCompCitys)
+    return render_template('user/AddUsers.html', ListSup=ListSup, ListAdmin=ListAdmin, ListTeam=ListTeam, ListPerfil=ListPerfil, ListCompCitys=ListCompCitys)
 
 @app.route('/Show',methods=['GET', 'POST'])
 def Show():
@@ -61,31 +65,54 @@ def Show():
 def addInterp():
     if request.method == 'POST':   
         #validacion si intenta crear un interpreete o supervisor    
-        if request.form['profile']=="supervisor":
+        if request.form['perfil']== "1":
             user = User(0,request.form['email'],request.form['pass'],request.form['solvoid'],request.form['name']
-                    ,request.form['lastname'],request.form['compciu'],"ACTIVO",0)
-            #Validacion si exite el supervisor
-            logged_user = ModelUser.ExistsUser(db, user,"supervisor")                
-        elif request.form['profile']=="interpreter":
+                    ,request.form['lastname'],request.form['compciu'],request.form['perfil'],"ACTIVO",0)
+            #Validacion si exite el Admin
+            logged_user = ModelUser.ExistsUser(db, user)
+        elif request.form['perfil']== "2":
             user = User(0,request.form['email'],request.form['pass'],request.form['solvoid'],request.form['name']
-                    ,request.form['lastname'],request.form['compciu'],"ACTIVO",request.form['supervisor'])
-            logged_user = ModelUser.ExistsUser(db, user,"interpreter")   
-            #Validacion     
-            #si existe el usuario, si no existe lo crea
+                    ,request.form['lastname'],request.form['compciu'],request.form['perfil'],"ACTIVO",request.form['administrator'])
+            #Validacion si exite el Supervisor
+            logged_user = ModelUser.ExistsUser(db, user)
+        elif request.form['perfil']== "3":
+            user = User(0,request.form['email'],request.form['pass'],request.form['solvoid'],request.form['name']
+                    ,request.form['lastname'],request.form['compciu'],request.form['perfil'],"ACTIVO",request.form['supervisor'])
+            #Validacion si exite el TeamLeader
+            logged_user = ModelUser.ExistsUser(db, user)
+        elif request.form['perfil']== "4":
+            user = User(0,request.form['email'],request.form['pass'],request.form['solvoid'],request.form['name']
+                    ,request.form['lastname'],request.form['compciu'],request.form['perfil'],"ACTIVO",request.form['teamleader'])
+            #Validacion si exite el Interpreter
+            logged_user = ModelUser.ExistsUser(db, user)
+
+        #si existe el usuario, si no existe lo crea
         if logged_user != None:
             flash("exists User")
             return redirect(url_for('Show'))
         else:
             #valida si el desea crear supervisor o interprete
-            if request.form['profile']=="supervisor":
+            if request.form['perfil']=="1":
+                #crea el supervisor
+                ModelUser.addAdmin(db, user) 
+                #envia mensaje de confirmacion
+                flash('Administrator created successfully')             
+                return redirect(url_for('Show'))
+            elif request.form['perfil']=="2":
                 #crea el supervisor
                 ModelUser.addSup(db, user) 
                 #envia mensaje de confirmacion
                 flash('Supervisor created successfully')             
                 return redirect(url_for('Show'))
-            elif request.form['profile']=="interpreter":
+            elif request.form['perfil']=="3":
+                #crea el supervisor
+                ModelUser.addSup(db, user) 
+                #envia mensaje de confirmacion
+                flash('Team leader created successfully')             
+                return redirect(url_for('Show'))
+            elif request.form['perfil']=="4":
                 #Crea interprete 
-                ModelUser.addInterp(db, user)
+                ModelUser.addSup(db, user)
                 #confirma envia mensaje de confirmacion
                 flash('Interpreter created successfully ')
                 return redirect(url_for('Show'))             
@@ -98,27 +125,50 @@ def addInterp():
 def editUsers(id):
     users = ModelUser.edit(db, id)
     ListSup=ModelUser.ListSup(db)
+    ListAdmin=ModelUser.ListAdmin(db)
+    ListTeam=ModelUser.ListTeam(db)
+    ListPerfil=ModelUser.perfil(db)
     ListCompCitys = ModelUser.CompanyCity(db)
-    return render_template('user/EditUsers.html', ListCompCitys=ListCompCitys, ListSup=ListSup, users=users)
+    return render_template('user/EditUsers.html', ListCompCitys=ListCompCitys, ListAdmin=ListAdmin, ListTeam=ListTeam, ListSup=ListSup, ListPerfil=ListPerfil, users=users)
     
 #Edita el usuario seleccionado en la vista
 @app.route('/Update', methods=['GET', 'POST'])
 def Update():
     if request.method == 'POST':
-        if request.form['idsupervisor'] == 'None':
+        if request.form['perfil'] == "1":
             user = User(request.form['userid'],request.form['email'],0,request.form['solvoid'],request.form['name']
-                ,request.form['lastname'],request.form['compciu'],"activo",0)
-            ModelUser.UpdateInt(db, user)
-            flash('User Interpreter edit successfuly')
+                ,request.form['lastname'],request.form['compciu'],request.form['perfil'],"ACTIVO",0)
+            ModelUser.UpdateAdmin(db, user)
+            flash('User Administrator edit successfuly')
             return redirect(url_for('Show'))
-        else:
+        if request.form['perfil'] == "2":
             user = User(request.form['userid'],request.form['email'],0,request.form['solvoid'],request.form['name']
-                ,request.form['lastname'],request.form['compciu'],"activo",request.form['idsupervisor'])
+                ,request.form['lastname'],request.form['compciu'],request.form['perfil'],"ACTIVO",request.form['administrator'])
             ModelUser.UpdateSup(db, user)
             flash('User Supervisor edit successfuly')
             return redirect(url_for('Show'))
+        if request.form['perfil'] == "3":
+            user = User(request.form['userid'],request.form['email'],0,request.form['solvoid'],request.form['name']
+                ,request.form['lastname'],request.form['compciu'],request.form['perfil'],"ACTIVO",request.form['supervisor'])
+            ModelUser.UpdateSup(db, user)
+            flash('User Team leader edit successfuly')
+            return redirect(url_for('Show'))
+        elif request.form['perfil'] == "4":
+            user = User(request.form['userid'],request.form['email'],0,request.form['solvoid'],request.form['name']
+                ,request.form['lastname'],request.form['compciu'],request.form['perfil'],"ACTIVO",request.form['teamleader'])
+            ModelUser.UpdateSup(db, user)
+            flash('User Interpreter edit successfuly')
+            return redirect(url_for('Show'))
     else:
         return redirect(url_for('Show'))
+
+@app.route('/ShowUser/<int:id>', methods=['GET', 'POST'])
+def ShowUser(id):
+    perfiles = ModelUser.perfil(db)
+    listUser = ModelUser.user(db)
+    listCompCity = ModelUser.CompanyCity(db)
+    showUser = ModelUser.ShowUser(db, id)
+    return render_template('user/showUser.html', perfiles=perfiles, listUser=listUser, listCompCity=listCompCity, showUser=showUser)
 
 #--------------------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------------------------

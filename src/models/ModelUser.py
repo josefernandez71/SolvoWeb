@@ -23,7 +23,7 @@ class ModelUser():
             raise Exception(ex)
         
     @classmethod
-    def ExistsUser(self, db, user, tipo):
+    def ExistsUser(self, db, user):
         try:
             cursor = db.connection.cursor()
             sql = """SELECT CORREO_SOLVO FROM usuario 
@@ -31,7 +31,7 @@ class ModelUser():
             cursor.execute(sql)
             row = cursor.fetchone()
             if row != None:
-                user = User(0,row[0],"")
+                user = User(0,row[0])
                 return user
             else:
                 return None
@@ -39,12 +39,12 @@ class ModelUser():
             raise Exception(ex)
 
     @classmethod
-    def addInterp(self, db, user):
+    def addAdmin(self, db, user):
         try:
             cursor = db.connection.cursor()
-            sql = """INSERT INTO USUARIO (ID_USUARIO,CORREO_SOLVO,CONTRASENA,ID_SOLVO,NOMBRES,APELLIDOS,ID_COMPANIACIUDAD,ESTADO,ID_SUPERVISOR)
-                VALUES (null,%s,%s, %s, %s,%s,%s,%s, %s)"""
-            cursor.execute(sql,(user.correo_solvo,generate_password_hash(user.contrasena),user.id_solvo,user.nombres,user.apellidos,user.id_compciu,user.estado,user.id_supervisor))
+            sql = """INSERT INTO USUARIO (ID_USUARIO,CORREO_SOLVO,CONTRASENA,ID_SOLVO,NOMBRES,APELLIDOS,ID_COMPANIACIUDAD,PERFIL,ESTADO)
+                VALUES (null,%s,%s,%s,%s,%s,%s,%s,%s)"""
+            cursor.execute(sql,(user.correo_solvo,generate_password_hash(user.contrasena),user.id_solvo,user.nombres,user.apellidos,user.id_compciu,user.perfil,user.estado))
             db.connection.commit()
         except Exception as ex:
             raise Exception(ex)
@@ -53,9 +53,9 @@ class ModelUser():
     def addSup(self, db, user):
         try:
             cursor = db.connection.cursor()
-            sql = """INSERT INTO USUARIO (ID_USUARIO,CORREO_SOLVO,CONTRASENA,ID_SOLVO,NOMBRES,APELLIDOS,ID_COMPANIACIUDAD,ESTADO)
-                VALUES (null,%s,%s, %s,%s,%s,%s, %s)"""
-            cursor.execute(sql,(user.correo_solvo,generate_password_hash(user.contrasena),user.id_solvo,user.nombres,user.apellidos,user.id_compciu,user.estado))
+            sql = """INSERT INTO USUARIO (ID_USUARIO,CORREO_SOLVO,CONTRASENA,ID_SOLVO,NOMBRES,APELLIDOS,ID_COMPANIACIUDAD,PERFIL,ESTADO,ID_SUPERVISOR)
+                VALUES (null,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+            cursor.execute(sql,(user.correo_solvo,generate_password_hash(user.contrasena),user.id_solvo,user.nombres,user.apellidos,user.id_compciu,user.perfil,user.estado,user.id_supervisor))
             db.connection.commit() 
         except Exception as ex:
             raise Exception(ex)
@@ -74,17 +74,47 @@ class ModelUser():
                 return None
         except Exception as ex:
             raise Exception(ex)
-        
+
     @classmethod
-    def ListSup(self,db):
+    def perfil(self, db):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT ID_USUARIO, NOMBRES, APELLIDOS FROM usuario WHERE id_supervisor is null"
+            sql = "SELECT ID_PERFIL, NOMBRE_PERFIL FROM perfiles"
             cursor.execute(sql)
             return cursor.fetchall()
         except Exception as ex:
             raise Exception(ex)
         
+    @classmethod
+    def ListAdmin(self,db):
+        try:
+            cursor = db.connection.cursor()
+            sql = "SELECT ID_USUARIO, NOMBRES, APELLIDOS FROM usuario WHERE PERFIL = 1"
+            cursor.execute(sql)
+            return cursor.fetchall()
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
+    def ListSup(self,db):
+        try:
+            cursor = db.connection.cursor()
+            sql = "SELECT ID_USUARIO, NOMBRES, APELLIDOS FROM usuario WHERE PERFIL = 2"
+            cursor.execute(sql)
+            return cursor.fetchall()
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
+    def ListTeam(self,db):
+        try:
+            cursor = db.connection.cursor()
+            sql = "SELECT ID_USUARIO, NOMBRES, APELLIDOS FROM usuario WHERE PERFIL = 3"
+            cursor.execute(sql)
+            return cursor.fetchall()
+        except Exception as ex:
+            raise Exception(ex)
+
     @classmethod
     def Show(self, db):
         try:
@@ -99,18 +129,18 @@ class ModelUser():
     def edit(self, db, id):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT ID_USUARIO, ID_SOLVO, NOMBRES, APELLIDOS, CORREO_SOLVO, ID_SUPERVISOR, ID_COMPANIACIUDAD FROM usuario WHERE ID_USUARIO={}".format(id)
+            sql = "SELECT ID_USUARIO, ID_SOLVO, NOMBRES, APELLIDOS, CORREO_SOLVO, ID_SUPERVISOR, ID_COMPANIACIUDAD, PERFIL FROM usuario WHERE ID_USUARIO={}".format(id)
             cursor.execute(sql)
             return cursor.fetchall()
         except Exception as ex:
             raise Exception(ex)
-            
+
     @classmethod
-    def UpdateInt(self, db, user):
+    def UpdateAdmin(self, db, user):
         try:
             cursor = db.connection.cursor()
-            sql = "UPDATE usuario SET ID_SOLVO=%s, NOMBRES=%s, APELLIDOS=%s, CORREO_SOLVO=%s, ID_SUPERVISOR=%s, ID_COMPANIACIUDAD=%s WHERE ID_USUARIO=%s"
-            cursor.execute(sql,(user.id_solvo,user.nombres,user.apellidos,user.correo_solvo,user.id_supervisor,user.id_compciu,user.id))
+            sql = "UPDATE usuario SET ID_SOLVO=%s, NOMBRES=%s, APELLIDOS=%s, CORREO_SOLVO=%s, ID_COMPANIACIUDAD=%s, PERFIL=%s WHERE ID_USUARIO=%s"
+            cursor.execute(sql,(user.id_solvo,user.nombres,user.apellidos,user.correo_solvo,user.id_compciu,user.perfil,user.id))
             db.connection.commit()
         except Exception as ex:
             raise Exception(ex)
@@ -119,9 +149,31 @@ class ModelUser():
     def UpdateSup(self, db, user):
         try:
             cursor = db.connection.cursor()
-            sql = "UPDATE usuario SET ID_SOLVO=%s, NOMBRES=%s, APELLIDOS=%s, CORREO_SOLVO=%s, ID_COMPANIACIUDAD=%s WHERE ID_USUARIO=%s"
-            cursor.execute(sql,(user.id_solvo,user.nombres,user.apellidos,user.correo_solvo,user.id_compciu,user.id))
+            sql = "UPDATE usuario SET ID_SOLVO=%s, NOMBRES=%s, APELLIDOS=%s, CORREO_SOLVO=%s, ID_SUPERVISOR=%s, ID_COMPANIACIUDAD=%s, PERFIL=%s WHERE ID_USUARIO=%s"
+            cursor.execute(sql,(user.id_solvo,user.nombres,user.apellidos,user.correo_solvo,user.id_supervisor,user.id_compciu,user.perfil,user.id))
             db.connection.commit()
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
+    def ShowUser(self, db, id):
+        try: 
+            cursor = db.connection.cursor()
+            sql = """SELECT ID_USUARIO, ID_SOLVO, NOMBRES, APELLIDOS, CORREO_SOLVO, PERFIL, id_supervisor, ID_COMPANIACIUDAD
+            FROM usuario where usuario.ID_USUARIO = {}""".format(id)
+            cursor.execute(sql)
+            return cursor.fetchall()
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
+    def user(self, db):
+        try: 
+            cursor = db.connection.cursor()
+            sql = """SELECT ID_USUARIO, ID_SOLVO, NOMBRES, APELLIDOS, CORREO_SOLVO, PERFIL, id_supervisor, ID_COMPANIACIUDAD
+                FROM usuario"""
+            cursor.execute(sql)
+            return cursor.fetchall()
         except Exception as ex:
             raise Exception(ex)
 
