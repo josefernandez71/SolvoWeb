@@ -89,7 +89,7 @@ class ModelUser():
     def ListAdmin(self,db):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT ID_USUARIO, NOMBRES, APELLIDOS FROM usuario WHERE PERFIL = 1"
+            sql = "SELECT ID_USUARIO, NOMBRES, APELLIDOS FROM usuario WHERE PERFIL = 1 "
             cursor.execute(sql)
             return cursor.fetchall()
         except Exception as ex:
@@ -99,7 +99,7 @@ class ModelUser():
     def ListSup(self,db):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT ID_USUARIO, NOMBRES, APELLIDOS FROM usuario WHERE PERFIL = 2"
+            sql = "SELECT ID_USUARIO, NOMBRES, APELLIDOS FROM usuario WHERE PERFIL = 2 "
             cursor.execute(sql)
             return cursor.fetchall()
         except Exception as ex:
@@ -109,7 +109,7 @@ class ModelUser():
     def ListTeam(self,db):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT ID_USUARIO, NOMBRES, APELLIDOS FROM usuario WHERE PERFIL = 3"
+            sql = "SELECT ID_USUARIO, NOMBRES, APELLIDOS FROM usuario WHERE PERFIL = 3 "
             cursor.execute(sql)
             return cursor.fetchall()
         except Exception as ex:
@@ -174,6 +174,33 @@ class ModelUser():
                 FROM usuario"""
             cursor.execute(sql)
             return cursor.fetchall()
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
+    def traerEstado(self, db, id):
+        try: 
+            cursor = db.connection.cursor()
+            sql = "SELECT ESTADO FROM usuario WHERE ID_USUARIO={}".format(id)
+            cursor.execute(sql)
+            return cursor.fetchone()
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
+    def State(self, db, id, estado):
+        state = str(estado)
+        try:
+            if state == "('activo',)" or state == "('ACTIVO',)":
+                cursor = db.connection.cursor()
+                sql  = "UPDATE usuario SET ESTADO='INACTIVO' WHERE ID_USUARIO={}".format(id)
+                cursor.execute(sql)
+                db.connection.commit()
+            elif state == "('inactivo',)" or state == "('INACTIVO',)":
+                cursor = db.connection.cursor()
+                sql  = "UPDATE usuario SET ESTADO='ACTIVO' WHERE ID_USUARIO={}".format(id)
+                cursor.execute(sql)
+                db.connection.commit()
         except Exception as ex:
             raise Exception(ex)
 

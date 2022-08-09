@@ -41,20 +41,20 @@
         <form action="/addInterp" method="POST" id="form" class="w3-row">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="w3-row w3-container m2 ">
-                <label for="solvoid">SOLVO ID</label>
-                <input type="text" name="solvoid" id="solvoid" placeholder="ID"> 
+                <label for="solvoid">SOLVO ID *</label>
+                <input type="text" name="solvoid" id="solvoid" placeholder="ID" required> 
 
-                <label for="name">FIRTS NAME</label>
-                <input type="text" name="name" id="name" placeholder="Name">
+                <label for="name">FIRTS NAME *</label>
+                <input type="text" name="name" id="name" placeholder="Name" required>
 
-                <label for="lastname">LAST NAME</label>
-                <input type="text" name="lastname" id="lastname" placeholder="Last Name">
+                <label for="lastname">LAST NAME *</label>
+                <input type="text" name="lastname" id="lastname" placeholder="Last Name" required>
             </div>
             <div class="w3-row w3-container m2 ">
-                <label for="email">CORP EMAIL</label>
-                <input type="text" name="email" id="email" placeholder="Email">
+                <label for="email">CORP EMAIL *</label>
+                <input type="text" name="email" id="email" placeholder="Email" required>
 
-                <label for="perfil">PERFIL</label>
+                <label for="perfil">PERFIL *</label>
                 <select type="text" name="perfil" id="perfil">
                     <option selected> SELECT </option> 
                 {% for perfil in ListPerfil%}
@@ -62,7 +62,7 @@
                 {%endfor%}  
                 </select>
 
-                <label for="administrator">ADMINISTRATOR</label>
+                <label for="administrator">ADMINISTRATOR *</label>
                 <select type="text" name="administrator" id="administrator">
                     <option> SELECT </option>
                 {% for administrator in ListAdmin%}
@@ -71,7 +71,7 @@
                 </select>
             </div>
             <div class="w3-row w3-container m2 ">
-                <label for="supervisor">SUPERVISOR</label>
+                <label for="supervisor">SUPERVISOR *</label>
                 <select type="text" name="supervisor" id="supervisor">
                     <option> SELECT </option>
                 {% for sup in ListSup%}
@@ -79,7 +79,7 @@
                 {%endfor%}  
                 </select>
                 
-                <label for="teamleader">TEAM LEADER</label>
+                <label for="teamleader">TEAM LEADER *</label>
                 <select type="text" name="teamleader" id="teamleader">
                     <option selected> SELECT </option> 
                 {% for teamleader in ListTeam%}
@@ -87,8 +87,8 @@
                 {%endfor%}  
                 </select>
 
-                <label for="">COMPANY CITY</label>
-                <select type="text" name="compciu" id="compciu">
+                <label for="">COMPANY CITY *</label>
+                <select type="text" name="compciu" id="compciu" required>
                     <option selected> SELECT </option> 
                 {% for ListCompCity in ListCompCitys%}
                     <option name="ListCompCity" value="{{ListCompCity.0}}">{{ListCompCity.1}} {{ListCompCity.2}}</option>
@@ -96,8 +96,8 @@
                 </select>
             </div>
             <div class="w3-row w3-container m2 ">
-                <label for="">PASSWORD</label>
-                <input type="text" name="pass" id="pass" placeholder="Password">
+                <label for="">PASSWORD *</label>
+                <input type="text" name="pass" id="pass" placeholder="Password" required>
             
                 <br><br><br>
                 <div style="padding-left: 10%;">
@@ -138,9 +138,9 @@
                         break;
 
                     default:
-                        $('#administrator').prop('disabled', false);
-                        $('#supervisor').prop('disabled', false);
-                        $('#teamleader').prop('disabled', false);  
+                        $('#administrator').prop('disabled', 'disabled');
+                        $('#supervisor').prop('disabled', 'disabled');
+                        $('#teamleader').prop('disabled', 'disabled');  
                         break;
                 }
             });

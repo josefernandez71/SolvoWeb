@@ -8,7 +8,6 @@ from flask_wtf.csrf import CSRFProtect
 from flask_json import FlaskJSON, JsonError, json_response, as_json
 from flask_login import LoginManager, login_user, logout_user, login_required,current_user
 from flask_socketio import SocketIO,emit,join_room,leave_room
-from flask_cors import CORS
 
 #controlador de configuracion 
 from config import config
@@ -25,19 +24,16 @@ from models.entities.City import City
 from models.entities.Company import Company
 from models.entities.CompanyCity import CompanyCity
 
+import time
+
 #asignacion de variables generales 
 app = Flask(__name__)
-app.secret_key='mysecretkey'
-app.config['MYSQL_HOST']='localhost'
-app.config['MYSQL_USER']='root'
-app.config['MYSQL_PASSWORD']=''
-app.config['MYSQL_DB']='solvo'
-CORS(app)
 json = FlaskJSON(app)
-csrf = CSRFProtect(app)
+csrf = CSRFProtect()
 db = MySQL(app)
 login_manager_app = LoginManager(app)
 # settings
+app.secret_key='mysecretkey'
 socket=SocketIO(app,async_mode="threading",async_handlers=True)
 
 #Obtiene usuario en la base de datos por el Id 
@@ -175,6 +171,17 @@ def ShowUser(id):
     listCompCity = ModelUser.CompanyCity(db)
     showUser = ModelUser.ShowUser(db, id)
     return render_template('user/showUser.html', perfiles=perfiles, listUser=listUser, listCompCity=listCompCity, showUser=showUser)
+
+@app.route('/inactive/<int:id>', methods=['GET', 'POST'])
+def inactive(id):
+    estado = ModelUser.traerEstado(db, id)
+    if estado != None:
+        ModelUser.State(db, id, estado)
+        flash('State update successfuly')
+        return redirect(url_for('Show'))
+    else: 
+        flash('Error state no update')
+        return redirect(url_for('Show'))
 
 #--------------------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------------------------
@@ -417,7 +424,9 @@ def changeState():
 
 @app.route('/RTS',methods=['GET', 'POST'])
 def RTS():
-    
+    if request.method == 'POST':
+        return False
+        
     return render_template('RealTime.html')
 #Respuestas a error por no estar autorizado para acceder a la pagina   
 def status_401(error):
@@ -466,14 +475,13 @@ def test_disconnect():
 
 
 #inicio de la pagina 
-
-#if __name__ == '__main__':
-#    app.config.from_object(config['development'])
-#    #csrf.init_app(app)
-#    app.register_error_handler(401, status_401)
-#    app.register_error_handler(404, status_404)
-#    app.run(debug=True)
-
+if __name__ == '__main__':
+    app.config.from_object(config['development'])
+    csrf.init_app(app)
+    app.register_error_handler(401, status_401)
+    app.register_error_handler(404, status_404)
+    app.run(debug=True)
+    
 
 #Consulta estado actual 
 #SELECT ID_HISTORIAL,ID_INTERPRETER,ID_SOLVO,RESPONSABLE,HORA_INICIO,ID_ESTADO FROM HISTORIAL WHERE ID_INTERPRETER=2 AND TEMP_BOOLEAN=1
