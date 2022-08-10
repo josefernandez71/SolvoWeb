@@ -89,7 +89,7 @@ class ModelUser():
     def ListAdmin(self,db):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT ID_USUARIO, NOMBRES, APELLIDOS FROM usuario WHERE PERFIL = 1 "
+            sql = "SELECT ID_USUARIO, NOMBRES, APELLIDOS FROM usuario WHERE PERFIL = 1 and ESTADO = 'ACTIVO'"
             cursor.execute(sql)
             return cursor.fetchall()
         except Exception as ex:
@@ -99,7 +99,7 @@ class ModelUser():
     def ListSup(self,db):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT ID_USUARIO, NOMBRES, APELLIDOS FROM usuario WHERE PERFIL = 2 "
+            sql = "SELECT ID_USUARIO, NOMBRES, APELLIDOS FROM usuario WHERE PERFIL = 2 and ESTADO = 'ACTIVO'"
             cursor.execute(sql)
             return cursor.fetchall()
         except Exception as ex:
@@ -109,7 +109,7 @@ class ModelUser():
     def ListTeam(self,db):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT ID_USUARIO, NOMBRES, APELLIDOS FROM usuario WHERE PERFIL = 3 "
+            sql = "SELECT ID_USUARIO, NOMBRES, APELLIDOS FROM usuario WHERE PERFIL = 3 and ESTADO = 'ACTIVO'"
             cursor.execute(sql)
             return cursor.fetchall()
         except Exception as ex:
