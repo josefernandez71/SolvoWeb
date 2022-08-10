@@ -7,23 +7,24 @@ from datetime import datetime
 class ModelUser():
 
     @classmethod
-    def login(self, db, user):
+    def login(self,db,user):
         try:
             cursor = db.connection.cursor()
-            sql = """SELECT ID_USUARIO,CORREO_SOLVO,CONTRASENA,ID_SOLVO,NOMBRES,APELLIDOS,ESTADO,ID_SUPERVISOR FROM usuario 
+            sql = """SELECT ID_USUARIO,CORREO_SOLVO,CONTRASENA,ID_SOLVO,NOMBRES,APELLIDOS,ESTADO,ID_SUPERVISOR,ID_COMPANIACIUDAD FROM usuario 
                     WHERE CORREO_SOLVO = '{}'""".format(user.correo_solvo)
             cursor.execute(sql)
             row = cursor.fetchone()
             if row != None:
-                user = User(row[0], row[1], User.check_password(row[2], user.contrasena), row[3],row[4],row[5],row[6])
+                compCiu=ModelUser.getCompCiu(db,row[8])
+                user = User(row[0], row[1],compCiu['compania'],compCiu['ciudad'], User.check_password(row[2], user.contrasena), row[3],row[4],row[5],row[6])
                 return user
             else:
                 return None
-        except Exception as ex:
+        except Exception as ex: 
             raise Exception(ex)
         
     @classmethod
-    def ExistsUser(self, db, user, tipo):
+    def ExistsUser(self,db,user):
         try:
             cursor = db.connection.cursor()
             sql = """SELECT CORREO_SOLVO FROM usuario 
@@ -61,16 +62,18 @@ class ModelUser():
             raise Exception(ex)
 
     @classmethod
-    def get_by_id(self, db, id):
+    def get_by_id(self,db,id):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT ID_USUARIO,CORREO_SOLVO,ID_SOLVO,NOMBRES,APELLIDOS,ESTADO,ID_SUPERVISOR FROM usuario WHERE ID_USUARIO = {}".format(id)
+            sql = "SELECT ID_USUARIO,CORREO_SOLVO,ID_SOLVO,NOMBRES,APELLIDOS,ESTADO,ID_SUPERVISOR,ID_COMPANIACIUDAD FROM usuario WHERE ID_USUARIO = {}".format(id)
             cursor.execute(sql)
             row = cursor.fetchone()
             if row != None:
-                Usuario=User(row[0], row[1], None, row[2],row[3],row[4],row[5],row[6])
+                compCiu=ModelUser.getCompCiu(db,row[7])
+                Usuario=User(row[0], row[1],compCiu['compania'],compCiu['ciudad'],None, row[2],row[3],row[4],row[5],row[6],)
                 return Usuario
             else:
+                db.close()
                 return None
         except Exception as ex:
             raise Exception(ex)
@@ -134,6 +137,28 @@ class ModelUser():
             INNER JOIN ciudad on ciudad.ID_CIUDAD=companiaciudad.ID_CIUDAD"""
             cursor.execute(sql)
             return cursor.fetchall()
+        except Exception as ex:
+            raise Exception(ex)
+        
+    @classmethod
+    def getCompCiu(self,db,idCC):
+        try:
+            
+            compCiu={}
+            cursor = db.connection.cursor()
+            sql = """select com.id_compania,com.NOMBRE_COMPANIA,ciu.id_ciudad,ciu.nombre_ciudad 
+                        from companiaciudad as CC
+                        inner join compania as com on CC.ID_COMPANIA = com.id_compania 
+                        inner join ciudad as ciu on CC.ID_CIUDAD=ciu.id_ciudad
+                        where CC.ID_COMCIU={}""".format(idCC)
+            cursor.execute(sql)
+            row = cursor.fetchone()
+            if row != None:
+                compCiu['compania']={'id':row[0],'nombre':row[1]}
+                compCiu['ciudad']={'id':row[2],'nombre':row[3]}
+                return compCiu
+            else:
+                return compCiu
         except Exception as ex:
             raise Exception(ex)
             

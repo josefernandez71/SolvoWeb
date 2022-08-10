@@ -20,122 +20,246 @@
             <li class="dropdown">
                 <a href="javascript:void(0)" class="dropbtn">opciones</a>
                 <div class="dropdown-content">
-                    <a href="{{url_for('menu')}}">- H O M E -</a>
+                    <a href="{{url_for('.menumenu')}}">- H O M E -</a>
                     <a href="{{url_for('Show')}}">Users List</a>
                     <a href="{{url_for('ShowCompCity')}}">Company City</a>
                 </div>
             </li>
-            <li style="float:right"><a href="#about">Log out</a></li>
+            <li style="float:right"><a href="{{url_for('logout')}}">Log out</a></li>
         </ul>
     </div>
-    <div id="contsele">
-        <h2>RTS</h2>
-    </div>
-
-    <div id="contable">
-        <table id="tabla_estados">
-            <tr>
-                <th width="170">Solvo ID</th>
-                <th width="180">Firts Name</th>
-                <th width="170">Last Name</th>
-                <th width="180">Supervisor</th>
-                <th width="180">State</th>
-                <th width="180">Time in State</th>
-            </tr>
-
-        </table>
-    </div>
-    <input type="text" id="holi">
-        <h1>Hola mundo</h1>
-        <button onclick="join()">Unir</button>
-        <button onclick="leave()">Abandonar</button>
-        <button onclick="sendMsj()">dame clik</button>
-    <script>
-        var sockets = io();
-        var socket = io.connect(null, {port: 5000, rememberTransport: false});
-        function join() {
-            socket.emit('join', {
-                room: "roomhola"
-            })
-        }
-
-        function leave() {
-            socket.emit('leave', {
-                room: "roomhola"
-            })
-        }
-
-        function sendMsj() {
-            message = document.querySelector("#holi")
-            if (message.value.trim() == "")
-                return alert("No hay mensaje que enviar")
-            socket.emit('chat', {
-                message: message.value.trim(),
-                room: "roomhola"
-            })
-            message.value = ""
-        }
-        sockets.on('connect', function() {
-            console.log('conectado');
-            socket.emit('join', {
-                room: "roomhola"
-            })
-            sockets.on('event', function(res) {
-                document.getElementById('holi').innerHTML = res
-                console.log(res);
+        <div>
+            <p>{{compania}}</p>
+        </div>
+        <div id="contsele">
+            
+            <h2>RTS</h2>
+        </div>
+        <div id="contable">
+            <table id="tabla_estados">
+                <thead>
+                    <tr>
+                        <th width="170">Solvo ID</th>
+                        <th width="180">Firts Name</th>
+                        <th width="170">Last Name</th>
+                        <th width="180">Supervisor</th>
+                        <th width="180">State</th>
+                        <th width="180">Time in State</th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    {% for historial in listRTS %}
+                    <tr class="row" id="{{historial['id']}}">
+                       <td>{{historial['id_solvo']}}</td> 
+                       <td>{{historial['Firts Name']}}</td> 
+                       <td>{{historial['Last Name']}}</td> 
+                       <td>{{historial['Supervisor']}}</td> 
+                       <td id="state">{{historial['state']}}</td> 
+                       <td id="rest">00:00:00</td> 
+                       <input type ="hidden" class="sime" id="sime" value="{{historial['totest']}}"></td> 
+                       <input type="hidden" class="hora_inicio" id="hora_inicio" value="{{historial['time']}}">
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <button onclick="exportTableToExcel('tabla_estados')">Export Table Data To Excel File</button>
+        <script>
+            
+            var sockets = io();
+            var socket = io.connect(null, {transports: ['websocket'],port: 5000, rememberTransport: false});
+            join()
+            function join() {
+                room="{{current_user.compania['nombre']}}"
+                socket.emit('join', {
+                    room: room
+                })
+            }
+    
+            function leave() {
+                room="{{current_user.compania['nombre']}}"
+                socket.emit('leave', {
+                    room: room
+                })
+            }
+    
+            function sendMsj() {
+                message = document.querySelector("#holi")
+                if (message.value.trim() == "")
+                    return alert("No hay mensaje que enviar")
+                room="{{current_user.compania['nombre']}}"
+                socket.emit('chat', {
+                    message: message.value.trim(),
+                    room: room
+                })
+                message.value = ""
+            }
+            sockets.on('connect', function() {
+                console.log('conectado');
+                room="{{current_user.compania['nombre']}}"
+                socket.emit('join', {
+                    room: room
+                })
+                sockets.on('event', function(res) {
+                    document.getElementById('holi').innerHTML = res
+                    console.log(res);
+                });
             });
-        });
-        sockets.on('disconnect', function() {
-            console.log('desconectados');
-        });
-        socket.on('leave', function(message) {
-            console.log("leave " + message)
-        }),
-        socket.on('join', function(message) {
-            console.log("join " + message)
-        });
-        socket.on('chat', function(message) {
-            j=JSON.parse(message)
-            console.log(message);
-            user=j['estadoactual']['user']
-            estado=j['estado']
-            if(!!document.getElementById(String(user['id']))){
-                usuario_existe(user,estado);
-            }else{
-                aggregar_fila(user,estado);
+            sockets.on('disconnect', function() {
+                console.log('desconectados');
+            });
+            socket.on('leave', function(message) {
+                console.log("leave " + message)
+            }),
+            socket.on('join', function(message) {
+                console.log("join" + message)
+            });
+            socket.on('chat', function(message) {
+                console.log(message);
+                j=JSON.parse(message);
+                console.log(j);
+                console.log(j['logout']);
+                if(j['logout']==false){
+                    user=j['estadoactual']['user'];
+                    estado=j['estado'];
+                    estadoactual=j['estadoactual']
+                    totales=j['totalStates']
+                    if(!!document.getElementById(String(user['id']))){
+                        usuario_existe(user,estado,estadoactual,totales);
+                    }else{
+                        supervisor=j['sup']
+                        aggregar_fila(user,estado,estadoactual,totales,supervisor);
+                    }
+                }else{
+                    document.getElementById(j['id']).remove();
+                }
+                
+            });
+    
+            function usuario_existe(user,estado,estadoactual,total){
+                console.log('actualizando');
+                let row=document.getElementById(String(user['id']));
+                row.querySelector('#rest').textContent="00:00:00"
+                row.querySelector('#sime').value="0"
+                row.cells.item(4).textContent=estado['nombre'];
+                console.log(estado['nombre']);
+                row.querySelector('#hora_inicio').value=estadoactual['hora_inicio'];
+                row.querySelector('#sime').value=total[estado['nombre']];
+                colores(user['id'],estado['nombre']);
             }
             
-
-        });
-        function usuario_existe(user,estado){
-            console.log('actualizando');
+    
+            function aggregar_fila(user,estado,estadoactual,total,supervisor){
+                console.log('agregando fila')
+                let btn=document.createElement('input')
+                btn.type="hidden";
+                btn.setAttribute("class","hora_inicio");
+                btn.setAttribute("id","hora_inicio");
+                btn.value=estadoactual['hora_inicio'];
+                let sime=document.createElement('input')
+                sime.type="hidden";
+                sime.setAttribute("class","sime");
+                sime.setAttribute("id","sime");
+                sime.value=value=total[estado['nombre']];
+                let tabla=document.getElementById('tabla_estados');
+                let new_row=tabla.insertRow(-1);
+                new_row.setAttribute("class","row");
+                new_row.setAttribute("id",user['id']);
+                color=colores(estado['nombre'])
+                new_row.style.backgroundColor=color
+                let new_cellis=new_row.insertCell(0)
+                new_cellis.textContent=user['id_solvo']
+                let new_cellnombre=new_row.insertCell(1)
+                new_cellnombre.textContent=user['nombres']
+                let new_celapellido=new_row.insertCell(2)
+                new_celapellido.textContent=user['apellidos']
+                let new_celsuper=new_row.insertCell(3)
+                new_celsuper.textContent=supervisor
+                let new_celestado=new_row.insertCell(4)
+                new_celestado.textContent=estado['nombre']
+                new_celestado.setAttribute("id",'state');
+                let new_celtime=new_row.insertCell(5)
+                new_celtime.textContent="00:00:00"
+                new_celtime.setAttribute("id","rest");
+                new_row.appendChild(btn)
+                new_row.appendChild(sime)
+                colores(user['id'],estado['nombre'])
+            }
+            function convertFromStringToDate(responseDate) {
+                    let dateComponents = responseDate.split(' ');
+                    let datePieces = dateComponents[0].split("-");
+                    let timePieces = dateComponents[1].split(":");
+                    return (new Date(datePieces[0], (datePieces[1] - 1), datePieces[2],
+                        timePieces[0], timePieces[1], timePieces[2]))
+                }
+            const agregarCeroSiEsNecesario = valor => {
+                    if (valor < 10) {
+                        return "0" + valor;
+                    } else {
+                        return "" + valor;
+                    }
+                }
+            const milisegundosAMinutosYSegundos = (milisegundos) => {
+                const horas = parseInt(milisegundos / 1000 / 60 / 60);
+                milisegundos -= horas * 60 * 60 * 1000;
+                const minutos = parseInt(milisegundos / 1000 / 60);
+    
+                milisegundos -= minutos * 60 * 1000;
+                const segundos = (milisegundos / 1000);
+                return `${agregarCeroSiEsNecesario(horas)}:${agregarCeroSiEsNecesario(minutos)}:${agregarCeroSiEsNecesario(segundos.toFixed())}`;
+            };
             
-            let row=document.getElementById(String(user['id']));
-            row.style.color="red";
-            console.log(row);
-            row.cells.item(4).innerHTML=estado['nombre'];
-            return true
-        }
-        function aggregar_fila(user,estado){
-            console.log('agregando fila')
-            let tabla=document.getElementById('tabla_estados');
-            let new_row=tabla.insertRow(-1);
-            new_row.setAttribute("id",user['id']);
-            let new_cellis=new_row.insertCell(0)
-            new_cellis.textContent=user['id_solvo']
-            let new_cellnombre=new_row.insertCell(1)
-            new_cellnombre.textContent=user['nombres']
-            let new_celapellido=new_row.insertCell(2)
-            new_celapellido.textContent=user['apellidos']
-            let new_celsuper=new_row.insertCell(3)
-            new_celsuper.textContent=user['id_supervisor']
-            let new_celestado=new_row.insertCell(4)
-            new_celestado.textContent=estado['nombre']
-            let new_celtime=new_row.insertCell(5)
-            new_celtime.textContent=estado['id']
-        }
-
-    </script>
+    
+            function iniciar(){
+                console.log("----------------------------------------------------");
+                let tabla=document.getElementById('tabla_estados');
+                const tableRows = document.querySelectorAll('#tabla_estados tr.row');
+                for(let i=0; i<tableRows.length; i++) {
+                    let row = tableRows[i];
+                    let status = row.querySelector('#sime');
+                    let lf=row.querySelector('#hora_inicio');
+                    let res=row.querySelector('#rest');
+                    let inicio=new Date(convertFromStringToDate(lf.value));
+                    let diferencia=new Date() - inicio.getTime();
+                    diferencia += Number(status.value);
+                    let now = new Date();
+                    let tiempoInicio = new Date(now.getTime() - diferencia);
+                    let ahora1 = new Date();
+                    let diferencia1 = ahora1.getTime() - tiempoInicio.getTime();
+                    res.textContent=milisegundosAMinutosYSegundos(diferencia1);
+                    }
+            };
+            window.onload = init;
+    
+            function init() {
+                setInterval(iniciar,5000)
+                forColoresTable();
+            }
+            function forColoresTable(){
+                let tabla=document.getElementById('tabla_estados');
+                const tableRows = document.querySelectorAll('#tabla_estados tr.row');
+                for(let i=0; i<tableRows.length; i++) {
+                    let row = tableRows[i];
+                    let id=row.getAttribute('id')
+                    let state=row.querySelector('#state');
+                    colores(id,state.textContent);
+                    }
+            }
+            function colores (id,estado){
+                if (estado!=""){
+                    elemt=document.getElementById(id);
+                    if(estado=="Available"){
+                        elemt.style.backgroundColor="White"
+                    }else if(estado=="Not Available" || estado=="Break" || estado=="Lunch"){
+                        elemt.style.backgroundColor="Red"
+                    }else if(estado=="Team Meeting" || estado=="Coaching"){
+                        elemt.style.backgroundColor="Yellow"
+                    }
+                }
+            }
+           
+        </script>
 </body>
 
 </html>

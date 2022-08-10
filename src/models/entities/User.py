@@ -22,4 +22,4 @@ class User(UserMixin):
     def __repr__(self):
        return "<id: " + str(self.id) +"<contraseña: " + str(self.contrasena) + "; id_solvo: " + str(self.id_solvo) + "; nombres: " + str(self.nombres)  + "; apellidos: " + str(self.apellidos) + "; id_compciu:" + str(self.id_compciu) + "; correo: " + str(self.correo_solvo) + "; estado: " + str(self.estado) + "; id_supervisor:" + str(self.id_supervisor) +">"
      
-print(generate_password_hash('Mauricio'))
+#print(generate_password_hash('Mauricio'))
