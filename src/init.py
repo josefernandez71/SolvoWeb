@@ -10,10 +10,10 @@ def init_app():
     #configuracion de la app 
     app.secret_key='mysecretkey'
     #configuracion de la Base de datos 
-    app.config['MYSQL_HOST']='us-cdbr-east-06.cleardb.net'
-    app.config['MYSQL_USER']='b1a740d25c64d3'
-    app.config['MYSQL_PASSWORD']='bfe2d3e7'
-    app.config['MYSQL_DB']='heroku_6d336b1af578ed7'
+    app.config['MYSQL_HOST']='localhost'
+    app.config['MYSQL_USER']='root'
+    app.config['MYSQL_PASSWORD']=''
+    app.config['MYSQL_DB']='solvo'
     #se agregan los blueprints para segmentar las rutas de la pagina web 
     app.register_blueprint(estados)
     app.register_blueprint(usuarios)

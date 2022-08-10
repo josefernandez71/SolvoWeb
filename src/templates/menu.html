@@ -48,7 +48,7 @@
 
         <div id="contbtn">
             <!--<div id="buttons">-->
-            <form action="/changeState" method="POST" id="buttons">
+            <form action="/estados/changeState" method="POST" id="buttons">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="button" class="unav" id="unav" value="Not Available">
                 <input type="button" class="ava" id="ava" value="Available">
@@ -63,6 +63,7 @@
 
             <!--</div>-->
         </div>
+
         <div id="mymodal" class="modalcont">
             <div id="modal-cont">
                 <div id="contm">

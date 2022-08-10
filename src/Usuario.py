@@ -24,41 +24,7 @@ def AdminUser():
     db=getdb()
     return render_template('AddUsers.html',ListSup=ModelUser.ListSup(db))
     #creacion de usuario interprete y supervisor
-@usuarios.route('/addInterp',methods=['GET', 'POST'],)
-def addInterp():
-    if request.method == 'POST':   
-        #validacion si intenta crear un interpreete o supervisor    
-        if request.form['profile']=="supervisor":
-            user = User(0,request.form['email'],request.form['pass'],request.form['solvoid'],request.form['name']
-                    ,request.form['lastname'],"activo",0)
-            #Validacion si exite el supervisor
-            logged_user = ModelUser.ExistsUser(user,"supervisor")                
-        elif request.form['profile']=="interpreter":
-            user = User(0,request.form['email'],request.form['pass'],request.form['solvoid'],request.form['name']
-                    ,request.form['lastname'],"activo",request.form['supervisor'])
-            logged_user = ModelUser.ExistsUser(user,"interpreter")   
-            #Validacion     
-            #si existe el usuario, si no existe lo crea
-        if logged_user != None:
-            flash("exists User")
-            return redirect(url_for('AdminUser'))
-        else:
-            #valida si el desea crear supervisor o interprete
-            if request.form['profile']=="supervisor":
-                #crea el supervisor
-                ModelUser.addSup(user) 
-                #envia mensaje de confirmacion
-                flash('Supervisor created successfully')             
-                return redirect(url_for('AdminUser'))
-            elif request.form['profile']=="interpreter":
-                #Crea interprete 
-                ModelUser.addInterp(user)
-                #confirma envia mensaje de confirmacion
-                flash('Interpreter created successfully ')
-                return redirect(url_for('AdminUser'))             
-            return redirect(url_for('AdminUser'))
-    else:
-        return redirect(url_for('AdminUser'))
+
     
 #Validacion de Inicio de sesion
 @usuarios.route('/login',methods=['GET', 'POST'])
