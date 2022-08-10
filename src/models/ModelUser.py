@@ -1,25 +1,22 @@
-from sys import flags
-from colorama import Cursor
-from flask import flash
 from .entities.User import User
-from werkzeug.security import check_password_hash,generate_password_hash
-from datetime import datetime
+from werkzeug.security import generate_password_hash
 class ModelUser():
 
     @classmethod
-    def login(self, db, user):
+    def login(self,db,user):
         try:
             cursor = db.connection.cursor()
-            sql = """SELECT ID_USUARIO,CORREO_SOLVO,CONTRASENA,ID_SOLVO,NOMBRES,APELLIDOS,ESTADO,ID_SUPERVISOR FROM usuario 
+            sql = """SELECT ID_USUARIO,CORREO_SOLVO,CONTRASENA,ID_SOLVO,NOMBRES,APELLIDOS,ESTADO,PERFIL,ID_SUPERVISOR,ID_COMPANIACIUDAD FROM usuario 
                     WHERE CORREO_SOLVO = '{}'""".format(user.correo_solvo)
             cursor.execute(sql)
             row = cursor.fetchone()
             if row != None:
-                user = User(row[0], row[1], User.check_password(row[2], user.contrasena), row[3],row[4],row[5],row[6])
+                compCiu=ModelUser.getCompCiu(db,row[9])
+                user = User(row[0], row[1],compCiu['compania'],compCiu['ciudad'], User.check_password(row[2], user.contrasena), row[3],row[4],row[5],row[6],row[7],row[8])
                 return user
             else:
                 return None
-        except Exception as ex:
+        except Exception as ex: 
             raise Exception(ex)
         
     @classmethod
@@ -31,7 +28,7 @@ class ModelUser():
             cursor.execute(sql)
             row = cursor.fetchone()
             if row != None:
-                user = User(0,row[0])
+                user = User(0,row[0],None,None)
                 return user
             else:
                 return None
@@ -61,14 +58,15 @@ class ModelUser():
             raise Exception(ex)
 
     @classmethod
-    def get_by_id(self, db, id):
+    def get_by_id(self,db,id):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT ID_USUARIO,CORREO_SOLVO,ID_SOLVO,NOMBRES,APELLIDOS,ESTADO,ID_SUPERVISOR FROM usuario WHERE ID_USUARIO = {}".format(id)
+            sql = "SELECT ID_USUARIO,CORREO_SOLVO,ID_SOLVO,NOMBRES,APELLIDOS,ESTADO,PERFIL,ID_SUPERVISOR,ID_COMPANIACIUDAD FROM usuario WHERE ID_USUARIO = {}".format(id)
             cursor.execute(sql)
             row = cursor.fetchone()
             if row != None:
-                Usuario=User(row[0], row[1], None, row[2],row[3],row[4],row[5],row[6])
+                compCiu=ModelUser.getCompCiu(db,row[8])
+                Usuario=User(row[0], row[1],compCiu['compania'],compCiu['ciudad'],None, row[2],row[3],row[4],row[5],row[6],row[7])
                 return Usuario
             else:
                 return None
@@ -89,7 +87,7 @@ class ModelUser():
     def ListAdmin(self,db):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT ID_USUARIO, NOMBRES, APELLIDOS FROM usuario WHERE PERFIL = 1 "
+            sql = "SELECT ID_USUARIO, NOMBRES, APELLIDOS FROM usuario WHERE PERFIL = 1 and ESTADO = 'ACTIVO'"
             cursor.execute(sql)
             return cursor.fetchall()
         except Exception as ex:
@@ -99,7 +97,7 @@ class ModelUser():
     def ListSup(self,db):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT ID_USUARIO, NOMBRES, APELLIDOS FROM usuario WHERE PERFIL = 2 "
+            sql = "SELECT ID_USUARIO, NOMBRES, APELLIDOS FROM usuario WHERE PERFIL = 2 and ESTADO = 'ACTIVO'"
             cursor.execute(sql)
             return cursor.fetchall()
         except Exception as ex:
@@ -109,7 +107,7 @@ class ModelUser():
     def ListTeam(self,db):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT ID_USUARIO, NOMBRES, APELLIDOS FROM usuario WHERE PERFIL = 3 "
+            sql = "SELECT ID_USUARIO, NOMBRES, APELLIDOS FROM usuario WHERE PERFIL = 3 and ESTADO = 'ACTIVO'"
             cursor.execute(sql)
             return cursor.fetchall()
         except Exception as ex:
@@ -148,13 +146,25 @@ class ModelUser():
     @classmethod
     def UpdateSup(self, db, user):
         try:
+            print(user.__dic__)
+            CC=ModelUser.Co_ci_CC(db,None,None)
             cursor = db.connection.cursor()
             sql = "UPDATE usuario SET ID_SOLVO=%s, NOMBRES=%s, APELLIDOS=%s, CORREO_SOLVO=%s, ID_SUPERVISOR=%s, ID_COMPANIACIUDAD=%s, PERFIL=%s WHERE ID_USUARIO=%s"
-            cursor.execute(sql,(user.id_solvo,user.nombres,user.apellidos,user.correo_solvo,user.id_supervisor,user.id_compciu,user.perfil,user.id))
+            cursor.execute(sql,(user.id_solvo,user.nombres,user.apellidos,user.correo_solvo,user.id_supervisor,CC,user.perfil,user.id))
             db.connection.commit()
         except Exception as ex:
             raise Exception(ex)
-
+    @classmethod
+    def Co_ci_CC(self,db,idCo,idCi):
+        try:
+            cursor = db.connection.cursor()
+            sql = "Select ID_COMCIU from companiaciudad where ID_COMPANIA=%s and ID_CIUDAD=%s"
+            cursor.execute(sql,(1,1))
+            id = cursor.fetchone()
+            return id
+        except Exception as ex:
+            raise Exception(ex)
+        
     @classmethod
     def ShowUser(self, db, id):
         try: 
@@ -215,4 +225,45 @@ class ModelUser():
             return cursor.fetchall()
         except Exception as ex:
             raise Exception(ex)
-            
+
+        
+    @classmethod
+    def getCompCiu(self,db,idCC):
+        try:
+            compCiu={}
+            cursor = db.connection.cursor()
+            sql = """select  com.id_compania,com.NOMBRE_COMPANIA,ciu.id_ciudad,ciu.nombre_ciudad 
+                        from companiaciudad as CC
+                        inner join compania as com on CC.ID_COMPANIA = com.id_compania 
+                        inner join ciudad as ciu on CC.ID_CIUDAD=ciu.id_ciudad
+                        where CC.ID_COMCIU={}""".format(idCC)
+            cursor.execute(sql)
+            row = cursor.fetchone()
+            if row != None:
+                compCiu['compania']={'id':row[0],'nombre':row[1]}
+                compCiu['ciudad']={'id':row[2],'nombre':row[3]}
+                return compCiu
+            else:
+                return compCiu
+        except Exception as ex:
+            raise Exception(ex)
+        
+    @classmethod
+    def getCompCiuTodos(self,db):
+        try:
+            lista=[]
+            cursor = db.connection.cursor()
+            sql = """select  CC.ID_COMCIU,com.id_compania,com.NOMBRE_COMPANIA,ciu.id_ciudad,ciu.nombre_ciudad 
+                        from companiaciudad as CC
+                        inner join compania as com on CC.ID_COMPANIA = com.id_compania 
+                        inner join ciudad as ciu on CC.ID_CIUDAD=ciu.id_ciudad"""
+            cursor.execute(sql)
+            compCiu=list(cursor.fetchall())#
+            for row in compCiu :
+                lista.append({'id':row[0],'compania':{'id':row[1],'nombre':row[2]},'ciudad':{'id':row[2],'nombre':row[4]}})
+                return lista
+            else:
+                return lista
+        except Exception as ex:
+            raise Exception(ex)
+

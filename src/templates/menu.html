@@ -24,7 +24,7 @@
             <li class="dropdown">
                 <a href="javascript:void(0)" class="dropbtn">opciones</a>
                 <div class="dropdown-content">
-                    <a href="{{url_for('menu')}}">- H O M E -</a>
+                    <a href="{{url_for('menu.menu')}}">- H O M E -</a>
                     <a href="{{url_for('Show')}}">Users List</a>
                     <a href="{{url_for('RTS')}}">RTS</a>
                     <a href="{{url_for('ShowCompCity')}}">Company City</a>
@@ -48,7 +48,7 @@
 
         <div id="contbtn">
             <!--<div id="buttons">-->
-            <form action="/changeState" method="POST" id="buttons">
+            <form action="/estados/changeState" method="POST" id="buttons">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="button" class="unav" id="unav" value="Not Available">
                 <input type="button" class="ava" id="ava" value="Available">
@@ -63,11 +63,6 @@
 
             <!--</div>-->
         </div>
-        <input type="text" id="holi">
-        <h1>Hola mundo</h1>
-        <button onclick="join()">Unir</button>
-        <button onclick="leave()">Abandonar</button>
-        <button onclick="sendMsj()">dame clik</button>
 
         <div id="mymodal" class="modalcont">
             <div id="modal-cont">
@@ -79,9 +74,9 @@
             </div>
         </div>
         {% block javascript %}
-        <script type="text/javascript">
+        <script>
             var sockets = io();
-            var socket = io.connect(null, {port: 5000, rememberTransport: false});
+            var socket = io.connect(null, {transports: [ "websocket","polling"],port: 5000, rememberTransport: false});
             response = null;
             let tiempoInicio = null;
             let tiempoAnterior = 0;
@@ -114,7 +109,7 @@
             $(document).on('submit', '#buttons', function(e) {
                 e.preventDefault();
                 $.ajax({
-                    url: '/changeState',
+                    url: '/estados/changeState',
                     data: $('form').serializeArray(),
                     type: 'POST',
                     response: null,
@@ -122,9 +117,11 @@
                         console.log('hola', typeof(response));
                         cambio(response);
                         res=JSON.stringify(response)
+                        room="{{current_user.compania['nombre']}}"
+
                         socket.emit('chat', {
                             message: res,
-                            room: "roomhola"
+                            room: room
                         })
                     },
                     error: function(error) {
@@ -132,6 +129,9 @@
                     }
                 });
             });
+
+            
+
 
             function clickEstado(aux) {
                 if (aux == "Avalable") {
@@ -157,6 +157,7 @@
                 } else {
                     console.log(aux);
                 }
+
             }
 
             function cambio(response) {
@@ -232,6 +233,16 @@
                 response = JSON.parse('{{data | tojson}}');
                 cambio(response);
                 color();
+                join();
+                console.log("response",response);
+                res=JSON.stringify(response)
+                console.log("res",res)
+                room="{{current_user.compania['nombre']}}"
+                
+                socket.emit('chat', {
+                    message: res,
+                    room: room
+                })
             }
 
             function color() {
@@ -294,7 +305,9 @@
                 diferenciaTemporal += Number(tiempoAnterior);
 
                 const ahora = new Date();
+                console.log(ahora)
                 tiempoInicio = new Date(ahora.getTime() - diferenciaTemporal);
+                console.log(tiempoInicio)
                 setInterval(refrescarTiempo, 100);
             };
 
@@ -312,27 +325,20 @@
             $btnIniciar.onclick = iniciar;
             
         function join() {
+            room="{{current_user.compania['nombre']}}"
             socket.emit('join', {
-                room: "roomhola"
+                room: room
             })
         }
 
         function leave() {
-            socket.emit('leave', {
-                room: "roomhola"
-            })
-        }
+            room="{{current_user.compania['nombre']}}"
 
-        function sendMsj() {
-            message = document.querySelector("#holi")
-            if (message.value.trim() == "")
-                return alert("No hay mensaje que enviar")
-            socket.emit('chat', {
-                message: message.value.trim(),
-                room: "roomhola"
+            socket.emit('leave', {
+                room: room
             })
-            message.value = ""
         }
+            
         sockets.on('connect', function() {
             console.log('conectado');
             sockets.on('event', function(res) {
@@ -351,10 +357,10 @@
         });
         socket.on('chat', function(message) {
             j=JSON.parse(message)
-            
             console.log("chat " )
             console.log(j['estadoactual'])
         });
+
         </script>
         {% endblock %}
 
