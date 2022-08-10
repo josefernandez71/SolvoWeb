@@ -52,23 +52,55 @@
                     <label for="">CORP EMAIL</label>
                     <input type="text" name="email" id="email" value="{{ user [4] }}" placeholder="Email">
                     
-                    {% if user [5]  != None %}
-                        <label for="">SUPERVISOR</label>
-                        <select type="text" name="supervisor" id="supervisor">
-                        {% for sup in ListSup%}
-                            {% if sup.0 == user [5] %}
-                                <option name="sup" value="{{sup.0}}" selected>{{sup.1}} {{sup.2}}</option>
-                            {% else %}
-                                <option name="sup" value="{{sup.0}}">{{sup.1}} {{sup.2}}</option>
-                            {% endif %}
-                        {%endfor%}  
-                        </select>
-                    {% else %}
-                        <label for="">SUPERVISOR</label>
-                        <input type="text" name="idsupervisor" id="idsupervisor" value="{{ user [5] }}" placeholder="Supervisor" readonly
-                        style="color: #a3a2a2; border: 1px solid #a3a2a2; background-color: #f5f4f4; border-radius: 3px;">
-                    {% endif %}
-                    <br><br>
+                    <label for="perfil">PERFIL</label>
+                    <select type="text" name="perfil" id="perfil">
+                        <option disabled> SELECT </option>
+                    {% for perfil in ListPerfil%}
+                        {% if perfil.0 == user [7] %}
+                            <option name="perfil" id="perfil" value="{{perfil.0}}" selected>{{perfil.1}}</option>
+                        {% else %}
+                            <option disabled name="perfil" value="{{perfil.0}}">{{perfil.1}}</option>
+                        {% endif %}
+                    {%endfor%}  
+                    </select>
+                </div>
+                <div class="w3-row w3-container m2 ">
+                    <label for="">ADMINISTRATOR</label>
+                    <select type="text" name="administrator" id="administrator">
+                        <option> SELECT </option>
+                    {% for administrator in ListAdmin%}
+                        {% if administrator.0 == user [5] %}
+                            <option name="administrator" value="{{administrator.0}}" selected>{{administrator.1}}</option>
+                        {% else %}
+                            <option name="administrator" value="{{administrator.0}}">{{administrator.1}}</option>
+                        {% endif %}
+                    {%endfor%}  
+                    </select>
+                    
+                    <label for="">SUPERVISOR</label>
+                    <select type="text" name="supervisor" id="supervisor">
+                        <option> SELECT </option>
+                    {% for sup in ListSup%}
+                        {% if sup.0 == user [5] %}
+                            <option name="sup" value="{{sup.0}}" selected>{{sup.1}} {{sup.2}}</option>
+                        {% else %}
+                            <option name="sup" value="{{sup.0}}">{{sup.1}} {{sup.2}}</option>
+                        {% endif %}
+                    {%endfor%}  
+                    </select>
+
+                    <label for="teamleader">TEAM LEADER</label>
+                    <select type="text" name="teamleader" id="teamleader">
+                        <option> SELECT </option>
+                    {% for teamleader in ListTeam%}
+                        {% if teamleader.0 == user [5] %}
+                            <option name="teamleader" value="{{teamleader.0}}" selected>{{teamleader.1}}</option>
+                        {% else %}
+                            <option name="teamleader" value="{{teamleader.0}}">{{teamleader.1}}</option>
+                        {% endif %}
+                    {%endfor%}  
+                    </select>
+                </div>
                 <div class="w3-row w3-container m2 ">
                     <label for="">COMPANY CITY</label>
                     <select type="text" name="compciu" id="compciu">
@@ -82,15 +114,53 @@
                     {%endfor%}  
                     </select>
 
-                    <input type="submit" value="ACTUALIZAR" id="actualizar">
-                    <input type="button" value="REGRESAR" onClick="history.go(-1);">
+                    
+                    <br><br><br>
+                    <div style="padding-left: 10%;">
+                        <input type="submit" value="ACTUALIZAR" id="actualizar">
+                        <input type="button" value="REGRESAR" onClick="history.go(-1);">
+                    </div>
                 </div>
             </form>
         {% endfor %}
     </div>
 
-    
+    <script>
+        $("#perfil").change(function() {
+            
+            switch ($('#perfil').val()) {
+                case "1":
+                    $('#administrator').prop('disabled', 'disabled');
+                    $('#supervisor').prop('disabled', 'disabled');
+                    $('#teamleader').prop('disabled', 'disabled');
+                    break;
+            
+                case "2":
+                    $('#supervisor').prop('disabled', 'disabled');
+                    $('#teamleader').prop('disabled', 'disabled');
+                    $('#administrator').prop('disabled', false);
+                    break;
 
+                case "3":
+                    $('#administrator').prop('disabled', 'disabled');
+                    $('#teamleader').prop('disabled', 'disabled');
+                    $('#supervisor').prop('disabled', false);
+                    break;
+
+                case "4": 
+                    $('#administrator').prop('disabled', 'disabled');
+                    $('#supervisor').prop('disabled', 'disabled');
+                    $('#teamleader').prop('disabled', false);
+                    break;
+
+                default:
+                    $('#administrator').prop('disabled', 'disabled');
+                    $('#supervisor').prop('disabled', 'disabled');
+                    $('#teamleader').prop('disabled', 'disabled');  
+                    break;
+            }
+        });
+    </script>
 </body>
 
 </html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/adduser.css')}}">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="cont">
+        <ul>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn">opciones</a>
+                <div class="dropdown-content">
+                    <a href="{{url_for('menu')}}">- H O M E -</a>
+                    <a href="{{url_for('Show')}}">Users List</a>
+                    <a href="#">Servicio 03</a>
+                </div>
+            </li>
+            <li style="float:right"><a href="{{url_for('logout')}}">Log out</a></li>
+        </ul>
+    </div>
+    <div class="w3-container">
+        <hr>
+        <div class="w3-center">
+            <h2>Show User</h2>
+        </div><br>
+                
+        {% for user in showUser %}
+
+            <table style="width: 50%;">
+                <tr>
+                    <th>ID: </th>
+                    <td>{{user [0]}}</td>
+                </tr>
+                <tr>
+                    <th>SOLVO ID: </th>
+                    <td>{{user [1]}}</td>
+                </tr>
+                <tr>
+                    <th>FIRST NAME: </th>
+                    <td>{{user [2]}}</td>
+                </tr>
+                <tr>
+                    <th>LAST NAME: </th>
+                    <td>{{user [3]}}</td>
+                </tr>
+                <tr>
+                    <th>CORP EMAIL: </th>
+                    <td>{{user [4]}}</td>
+                </tr>
+                <tr>
+                    <th>PERFIL: </th>
+                    <td>
+                        {% for perfil in perfiles %}
+                            {% if perfil.0 == user [5] %}
+                                {{perfil [1]}} 
+                            {% endif %} 
+                        {% endfor %} 
+                    </td>
+                </tr>
+                <tr>
+                    <th>SUPERIOR: </th>
+                    <td>
+                        {% for list in listUser %}
+                            {% if list.0 == user [6] %}
+                                {{list [2]}} {{list [3]}}
+                            {% endif %} 
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>COMPANY CITY: </th>
+                    <td>
+                        {% for compCity in listCompCity %}
+                            {% if compCity.0 == user [7] %}
+                                {{compCity [1]}} {{compCity [2]}}
+                            {% endif %} 
+                        {% endfor %}
+                    </td>
+                </tr>
+            </table>
+
+        {% endfor %}
+
+        <div style="padding-top: 3%; padding-left: 47%;">
+            <input type="button" value="REGRESAR" onClick="history.go(-1);">
+        </div>
+    </div>
+</body>
+
+</html>

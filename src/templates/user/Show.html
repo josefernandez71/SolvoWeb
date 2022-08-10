@@ -61,14 +61,15 @@
                     <td>{{user [4]}}</td>
                     <td>{{user [5]}}</td>
                     <td>  
-                        <a href="editUsers/{{user [0]}}"> EDIT </a> 
-                        <!-- <a href="changEstate/{{user [0]}}"> 
+                        <a href="editUsers/{{user [0]}}"> EDIT </a> |
+                        <a href="inactive/{{user [0]}}"> 
                             {% if user[5] == 'activo' or user[5] == 'ACTIVO' %}
                                 INACTIVE
                             {% elif user[5] == 'inactivo' or user[5] == 'INACTIVO' %}
                                 ACTIVE
                             {% endif %}
-                        </a> -->
+                        </a> |
+                        <a href="ShowUser//{{user [0]}}">VIEW</a>
                     </td>
                 </tr>
                 {%endfor%}
