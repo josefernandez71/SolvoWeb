@@ -43,7 +43,7 @@ class ModelUser():
             cursor = db.connection.cursor()
             sql = """INSERT INTO USUARIO (ID_USUARIO,CORREO_SOLVO,ID_COMPANIA,ID_CIUDAD,CONTRASENA,ID_SOLVO,NOMBRES,APELLIDOS,PERFIL,ESTADO)
                 VALUES (null,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
-            cursor.execute(sql,(user.correo_solvo,user.compania,user.ciudad,generate_password_hash(user.contrasena),user.id_solvo,user.nombres,user.apellido,user.perfil,user.estado))
+            cursor.execute(sql,(user.correo_solvo,user.compania,user.ciudad,generate_password_hash(user.contrasena),user.id_solvo,user.nombres,user.apellidos,user.perfil,user.estado))
             db.connection.commit()
         except Exception as ex:
             raise Exception(ex)
