@@ -161,7 +161,7 @@ class ModelState():
                 supervisor=ModelUser.get_by_id(db,int(user.id_supervisor))
                 state=ModelState.get_by_id(db,estado[4])
                 totest=ModelState.totalStates(db,user)
-                if(compania==user.compania['nombre']):
+                if(compania==user.compania):
                     Hist={'id':user.id,'id_solvo':user.id_solvo,'Firts Name':user.nombres,'Last Name':user.apellidos,'Supervisor':supervisor.nombres,'state':state.nombre,'time':estado[3].strftime('%Y-%m-%d %H:%M:%S'),'totest':totest[state.nombre]}
                     lHistor.append(Hist) 
             if not lHistor:

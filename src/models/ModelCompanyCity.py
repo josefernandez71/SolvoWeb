@@ -178,7 +178,10 @@ class ModelCompanyCity():
     def ShowCompCity(self, db):
         try:
             cursor = db.connection.cursor()
-            sql = "SELECT companiaciudad.ID_COMCIU, ciudad.NOMBRE_CIUDAD, compania.NOMBRE_COMPANIA from companiaciudad JOIN ciudad on ciudad.ID_CIUDAD=companiaciudad.ID_CIUDAD JOIN compania ON compania.ID_COMPANIA=companiaciudad.ID_COMPANIA"
+            sql = """SELECT companiaciudad.ID_COMCIU, ciudad.NOMBRE_CIUDAD, 
+            compania.NOMBRE_COMPANIA from companiaciudad JOIN ciudad ON 
+            ciudad.ID_CIUDAD=companiaciudad.ID_CIUDAD JOIN compania ON 
+            compania.ID_COMPANIA=companiaciudad.ID_COMPANIA"""
             cursor.execute(sql)
             return cursor.fetchall() 
         except Exception as ex:

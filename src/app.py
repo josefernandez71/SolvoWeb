@@ -1,6 +1,11 @@
 # Controlador principal de la pagina web
 #importaciones necesarias de flask
 
+from ast import And, If
+from operator import and_, length_hint, truediv
+from pickle import FALSE, TRUE
+import re
+from traceback import print_tb
 from flask import render_template, request, redirect, url_for, flash
 from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager, logout_user, login_required,current_user
@@ -46,8 +51,8 @@ def index():
 
 @app.route('/RTS',methods=['GET', 'POST'])
 def RTS():
-    listRT=ModelState.listRTS(db,current_user.compania['nombre'])
-    return render_template('RealTime.html',compania=current_user.compania['nombre'] ,listRTS=listRT)
+    listRT=ModelState.listRTS(db,current_user.compania)
+    return render_template('RealTime.html',compania=current_user.compania, listRTS=listRT)
 #Respuestas a error por no estar autorizado para acceder a la pagina   
 def status_401(error):
     return redirect(url_for('Usuario.login'))
@@ -117,8 +122,9 @@ def AdminUser():
     ListAdmin=ModelUser.ListAdmin(db)
     ListTeam=ModelUser.ListTeam(db)
     ListPerfil=ModelUser.perfil(db)
-    ListCompCitys=ModelUser.CompanyCity(db)
-    return render_template('user/AddUsers.html', ListSup=ListSup, ListAdmin=ListAdmin, ListTeam=ListTeam, ListPerfil=ListPerfil, ListCompCitys=ListCompCitys)
+    citys = ModelUser.listCity(db)
+    companys = ModelUser.listCompany(db)
+    return render_template('user/AddUsers.html', ListSup=ListSup, ListAdmin=ListAdmin, ListTeam=ListTeam, ListPerfil=ListPerfil, citys=citys, companys=companys)
 
 @app.route('/Show',methods=['GET', 'POST'])
 def Show():
@@ -130,57 +136,63 @@ def addInterp():
     if request.method == 'POST':   
         #validacion si intenta crear un interpreete o supervisor    
         if request.form['perfil']== "1":
-            user = User(0,request.form['email'],request.form['pass'],request.form['solvoid'],request.form['name']
-                    ,request.form['lastname'],request.form['compciu'],request.form['perfil'],"ACTIVO",0)
+            user = User(0,request.form['email'],request.form['comp'],request.form['ciu'],request.form['pass'],request.form['solvoid'],request.form['name']
+                    ,request.form['lastname'],request.form['perfil'],"ACTIVO",0)
             #Validacion si exite el Admin
             logged_user = ModelUser.ExistsUser(db, user)
+            relacion = compciu(request.form['comp'],request.form['ciu'])
         elif request.form['perfil']== "2":
-            user = User(0,request.form['email'],request.form['pass'],request.form['solvoid'],request.form['name']
-                    ,request.form['lastname'],request.form['compciu'],request.form['perfil'],"ACTIVO",request.form['administrator'])
+            user = User(0,request.form['email'],request.form['comp'],request.form['ciu'],request.form['pass'],request.form['solvoid'],request.form['name']
+                    ,request.form['lastname'],request.form['perfil'],"ACTIVO",request.form['administrator'])
             #Validacion si exite el Supervisor
             logged_user = ModelUser.ExistsUser(db, user)
+            relacion = compciu(request.form['comp'],request.form['ciu'])
         elif request.form['perfil']== "3":
-            user = User(0,request.form['email'],request.form['pass'],request.form['solvoid'],request.form['name']
-                    ,request.form['lastname'],request.form['compciu'],request.form['perfil'],"ACTIVO",request.form['supervisor'])
+            user = User(0,request.form['email'],request.form['comp'],request.form['ciu'],request.form['pass'],request.form['solvoid'],request.form['name']
+                    ,request.form['lastname'],request.form['perfil'],"ACTIVO",request.form['supervisor'])
             #Validacion si exite el TeamLeader
             logged_user = ModelUser.ExistsUser(db, user)
+            relacion = compciu(request.form['comp'],request.form['ciu'])
         elif request.form['perfil']== "4":
-            user = User(0,request.form['email'],request.form['pass'],request.form['solvoid'],request.form['name']
-                    ,request.form['lastname'],request.form['compciu'],request.form['perfil'],"ACTIVO",request.form['teamleader'])
+            user = User(0,request.form['email'],request.form['comp'],request.form['ciu'],request.form['pass'],request.form['solvoid'],request.form['name']
+                    ,request.form['lastname'],request.form['perfil'],"ACTIVO",request.form['teamleader'])
             #Validacion si exite el Interpreter
             logged_user = ModelUser.ExistsUser(db, user)
+            relacion = compciu(request.form['comp'],request.form['ciu'])
 
         #si existe el usuario, si no existe lo crea
         if logged_user != None:
             flash("exists User")
             return redirect(url_for('Show'))
         else:
-            #valida si el desea crear supervisor o interprete
-            if request.form['perfil']=="1":
-                #crea el supervisor
+            #valida si el desea crear administrador, supervisor, team leader o interprete
+            if request.form['perfil']=="1" and relacion==True:
+                #crea el administrador
                 ModelUser.addAdmin(db, user) 
                 #envia mensaje de confirmacion
                 flash('Administrator created successfully')             
                 return redirect(url_for('Show'))
-            elif request.form['perfil']=="2":
+            elif request.form['perfil']=="2" and relacion==True:
                 #crea el supervisor
                 ModelUser.addSup(db, user) 
                 #envia mensaje de confirmacion
                 flash('Supervisor created successfully')             
                 return redirect(url_for('Show'))
-            elif request.form['perfil']=="3":
-                #crea el supervisor
+            elif request.form['perfil']=="3" and relacion==True:
+                #crea el team leader
                 ModelUser.addSup(db, user) 
                 #envia mensaje de confirmacion
                 flash('Team leader created successfully')             
                 return redirect(url_for('Show'))
-            elif request.form['perfil']=="4":
-                #Crea interprete 
+            elif request.form['perfil']=="4" and relacion==True:
+                #crea el interprete 
                 ModelUser.addSup(db, user)
                 #confirma envia mensaje de confirmacion
                 flash('Interpreter created successfully ')
-                return redirect(url_for('Show'))             
-            return redirect(url_for('Show'))
+                return redirect(url_for('Show'))
+            else: 
+                flash('Error with profile or selected city with company')
+                return redirect(url_for('Show'))
     else:
         return redirect(url_for('Show'))
 
@@ -188,43 +200,74 @@ def addInterp():
 @app.route('/editUsers/<int:id>', methods=['GET', 'POST'])
 def editUsers(id):
     users = ModelUser.edit(db, id)
-    ListSup=ModelUser.ListSup(db)
-    ListAdmin=ModelUser.ListAdmin(db)
-    ListTeam=ModelUser.ListTeam(db)
-    ListPerfil=ModelUser.perfil(db)
-    ListCompCitys = ModelUser.CompanyCity(db)
-    return render_template('user/EditUsers.html', ListCompCitys=ListCompCitys, ListAdmin=ListAdmin, ListTeam=ListTeam, ListSup=ListSup, ListPerfil=ListPerfil, users=users)
+    ListSup = ModelUser.ListSup(db)
+    ListAdmin = ModelUser.ListAdmin(db)
+    ListTeam = ModelUser.ListTeam(db)
+    ListPerfil = ModelUser.perfil(db)
+    citys = ModelUser.listCity(db)
+    companys = ModelUser.listCompany(db)
+    return render_template('user/EditUsers.html', citys=citys, companys=companys, ListAdmin=ListAdmin, ListTeam=ListTeam, ListSup=ListSup, ListPerfil=ListPerfil, users=users)
     
 #Edita el usuario seleccionado en la vista
 @app.route('/Update', methods=['GET', 'POST'])
 def Update():
     if request.method == 'POST':
         if request.form['perfil'] == "1":
-            user = User(request.form['userid'],request.form['email'],None,None,0,request.form['solvoid'],request.form['name']
+            user = User(request.form['userid'],request.form['email'],request.form['comp'],request.form['ciu'],0,request.form['solvoid'],request.form['name']
                 ,request.form['lastname'],request.form['perfil'],"ACTIVO",0)
-            ModelUser.UpdateAdmin(db, user)
-            flash('User Administrator edit successfuly')
-            return redirect(url_for('Show'))
+            relacion = compciu(request.form['comp'], request.form['ciu'])
+            if relacion == True:
+                ModelUser.UpdateSup(db, user)
+                flash('User Interpreter edit successfuly')
+                return redirect(url_for('Show'))
+            else:
+                flash('The selected Company is not located in the city')
+                return redirect(url_for('Show'))
+
         if request.form['perfil'] == "2":
-            user = User(request.form['userid'],request.form['email'],None,None,0,request.form['solvoid'],request.form['name']
+            user = User(request.form['userid'],request.form['email'],request.form['comp'],request.form['ciu'],0,request.form['solvoid'],request.form['name']
                 ,request.form['lastname'],request.form['perfil'],"ACTIVO",request.form['administrator'])
-            ModelUser.UpdateSup(db, user)
-            flash('User Supervisor edit successfuly')
-            return redirect(url_for('Show'))
+            relacion = compciu(request.form['comp'], request.form['ciu'])
+            if relacion == True:
+                ModelUser.UpdateSup(db, user)
+                flash('User Supervisor edit successfuly')
+                return redirect(url_for('Show'))
+            else:
+                flash('The selected Company is not located in the city')
+                return redirect(url_for('Show'))
+
         if request.form['perfil'] == "3":
-            user = User(request.form['userid'],request.form['email'],None,None,0,request.form['solvoid'],request.form['name']
+            user = User(request.form['userid'],request.form['email'],request.form['comp'],request.form['ciu'],0,request.form['solvoid'],request.form['name']
                 ,request.form['lastname'],request.form['perfil'],"ACTIVO",request.form['supervisor'])
-            ModelUser.UpdateSup(db, user)
-            flash('User Team leader edit successfuly')
-            return redirect(url_for('Show'))
+            relacion = compciu(request.form['comp'], request.form['ciu'])
+            if relacion == True:
+                ModelUser.UpdateSup(db, user)
+                flash('User Team leader edit successfuly')
+                return redirect(url_for('Show'))
+            else:
+                flash('The selected Company is not located in the city')
+                return redirect(url_for('Show'))
+
         elif request.form['perfil'] == "4":
-            user = User(request.form['userid'],request.form['email'],None,None,0,request.form['solvoid'],request.form['name']
+            user = User(request.form['userid'],request.form['email'],request.form['comp'],request.form['ciu'],0,request.form['solvoid'],request.form['name']
                 ,request.form['lastname'],request.form['perfil'],"ACTIVO",request.form['teamleader'])
-            ModelUser.UpdateSup(db, user)
-            flash('User Interpreter edit successfuly')
-            return redirect(url_for('Show'))
+            relacion = compciu(request.form['comp'], request.form['ciu'])
+            if relacion == True:
+                ModelUser.UpdateSup(db, user)
+                flash('User Interpreter edit successfuly')
+                return redirect(url_for('Show'))
+            else:
+                flash('The selected Company is not located in the city')
+                return redirect(url_for('Show'))
     else:
         return redirect(url_for('Show'))
+
+def compciu(comp, ciu):
+    lista = ModelUser.getCompCiuTodos(db)
+    for listacc in lista:
+        if listacc['id'] >=0 and listacc['ciudad']['id']==int(ciu) and listacc['compania']['id']==int(comp):
+            return True
+    return False
 
 @app.route('/ShowUser/<int:id>', methods=['GET', 'POST'])
 def ShowUser(id):

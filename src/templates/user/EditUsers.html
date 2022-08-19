@@ -32,7 +32,6 @@
                 
         {% for user in users %}
             <form action="/Update" method="POST" id="form" class="w3-row">
-                
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="w3-row w3-container m2 ">
                     <label for="">ID</label>
@@ -56,7 +55,7 @@
                     <select type="text" name="perfil" id="perfil">
                         <option disabled> SELECT </option>
                     {% for perfil in ListPerfil%}
-                        {% if perfil.0 == user [7] %}
+                        {% if perfil.0 == user [8] %}
                             <option name="perfil" id="perfil" value="{{perfil.0}}" selected>{{perfil.1}}</option>
                         {% else %}
                             <option disabled name="perfil" value="{{perfil.0}}">{{perfil.1}}</option>
@@ -70,9 +69,9 @@
                         <option> SELECT </option>
                     {% for administrator in ListAdmin%}
                         {% if administrator.0 == user [5] %}
-                            <option name="administrator" value="{{administrator.0}}" selected>{{administrator.1}}</option>
+                            <option name="administrator" value="{{administrator.0}}" selected>{{administrator.1}} {{administrator.2}}</option>
                         {% else %}
-                            <option name="administrator" value="{{administrator.0}}">{{administrator.1}}</option>
+                            <option name="administrator" value="{{administrator.0}}">{{administrator.1}} {{administrator.2}}</option>
                         {% endif %}
                     {%endfor%}  
                     </select>
@@ -94,35 +93,46 @@
                         <option> SELECT </option>
                     {% for teamleader in ListTeam%}
                         {% if teamleader.0 == user [5] %}
-                            <option name="teamleader" value="{{teamleader.0}}" selected>{{teamleader.1}}</option>
+                            <option name="teamleader" value="{{teamleader.0}}" selected>{{teamleader.1}} {{teamleader.2}}</option>
                         {% else %}
-                            <option name="teamleader" value="{{teamleader.0}}">{{teamleader.1}}</option>
+                            <option name="teamleader" value="{{teamleader.0}}">{{teamleader.1}} {{teamleader.2}}</option>
                         {% endif %}
                     {%endfor%}  
                     </select>
                 </div>
                 <div class="w3-row w3-container m2 ">
-                    <label for="">COMPANY CITY</label>
-                    <select type="text" name="compciu" id="compciu">
+                    <label for="">COMPANY</label>
+                    <select type="number" name="ciu" id="ciu">
                         <option> SELECT </option>
-                    {% for ListCompCity in ListCompCitys%}
-                        {% if ListCompCity.0 == user [6] %}
-                            <option name="ListCompCity" value="{{ListCompCity.0}}" selected>{{ListCompCity.2}} {{ListCompCity.1}}</option>
+                    {% for company in companys %}
+                        {% if company.0 == user[7] %}
+                            <option name="company" value="{{ company.0 }}" selected>{{ company.1 }}</option>
                         {% else %}
-                            <option name="ListCompCity" value="{{ListCompCity.0}}" >{{ListCompCity.2}} {{ListCompCity.1}}</option>
+                            <option name="company" value="{{ company.0 }}" >{{ company.1 }}</option>
                         {% endif %}
                     {%endfor%}  
                     </select>
 
-                    
-                    <br><br><br>
+                    <label for="">CITY</label>
+                    <select type="number" name="comp" id="comp">
+                        <option> SELECT </option>
+                    {% for city in citys %}
+                        {% if city.0 == user [6] %}
+                            <option name="city" value="{{ city.0 }}" selected>{{ city.1 }}</option>
+                        {% else %}
+                            <option name="city" value="{{ city.0 }}" >{{ city.1 }}</option>
+                        {% endif %}
+                    {%endfor%}  
+                    </select>
+
+                    <br><br>
                     <div style="padding-left: 10%;">
                         <input type="submit" value="ACTUALIZAR" id="actualizar">
                         <input type="button" value="REGRESAR" onClick="history.go(-1);">
                     </div>
                 </div>
             </form>
-        {% endfor %}
+        {%endfor%}
     </div>
 
     <script>

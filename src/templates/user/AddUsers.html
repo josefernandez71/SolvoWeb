@@ -87,15 +87,23 @@
                 {%endfor%}  
                 </select>
 
-                <label for="">COMPANY CITY *</label>
-                <select type="text" name="compciu" id="compciu" required>
+                <label for="">COMPANY *</label>
+                <select type="text" name="comp" id="comp" required>
                     <option selected> SELECT </option> 
-                {% for ListCompCity in ListCompCitys%}
-                    <option name="ListCompCity" value="{{ListCompCity.0}}">{{ListCompCity.1}} {{ListCompCity.2}}</option>
+                {% for company in companys%}
+                    <option name="company" value="{{company.0}}"> {{company.1}} </option>
                 {%endfor%}  
                 </select>
             </div>
             <div class="w3-row w3-container m2 ">
+                <label for="">CITY *</label>
+                <select type="text" name="ciu" id="ciu" required>
+                    <option selected> SELECT </option> 
+                {% for city in citys%}
+                    <option name="city" value="{{city.0}}"> {{city.1}} </option>
+                {%endfor%}  
+                </select>
+
                 <label for="">PASSWORD *</label>
                 <input type="text" name="pass" id="pass" placeholder="Password" required>
             
