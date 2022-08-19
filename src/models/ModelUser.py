@@ -43,7 +43,7 @@ class ModelUser():
             cursor = db.connection.cursor()
             sql = """INSERT INTO USUARIO (ID_USUARIO,CORREO_SOLVO,ID_COMPANIA,ID_CIUDAD,CONTRASENA,ID_SOLVO,NOMBRES,APELLIDOS,PERFIL,ESTADO)
                 VALUES (null,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
-            cursor.execute(sql,(user.correo_solvo,user.compania,user.ciudad,generate_password_hash(user.contrasena),user.id_solvo,user.nombres,user.apellido,user.perfil,user.estado))
+            cursor.execute(sql,(user.correo_solvo,user.compania,user.ciudad,generate_password_hash(user.contrasena),user.id_solvo,user.nombres,user.apellidos,user.perfil,user.estado))
             db.connection.commit()
         except Exception as ex:
             raise Exception(ex)
@@ -172,7 +172,7 @@ class ModelUser():
     def ShowUser(self, db, id):
         try: 
             cursor = db.connection.cursor()
-            sql = """SELECT ID_USUARIO, ID_SOLVO, NOMBRES, APELLIDOS, CORREO_SOLVO, PERFIL, id_supervisor, ID_COMPANIACIUDAD
+            sql = """SELECT ID_USUARIO, ID_SOLVO, NOMBRES, APELLIDOS, CORREO_SOLVO, PERFIL, ID_COMPANIA, ID_CIUDAD, id_supervisor
             FROM usuario where usuario.ID_USUARIO = {}""".format(id)
             cursor.execute(sql)
             return cursor.fetchall()
@@ -183,7 +183,7 @@ class ModelUser():
     def user(self, db):
         try: 
             cursor = db.connection.cursor()
-            sql = """SELECT ID_USUARIO, ID_SOLVO, NOMBRES, APELLIDOS, CORREO_SOLVO, PERFIL, id_supervisor, ID_COMPANIACIUDAD
+            sql = """SELECT ID_USUARIO, ID_SOLVO, NOMBRES, APELLIDOS, CORREO_SOLVO, PERFIL, ID_COMPANIA, ID_CIUDAD, id_supervisor
                 FROM usuario"""
             cursor.execute(sql)
             return cursor.fetchall()

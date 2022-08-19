@@ -198,7 +198,7 @@ def addInterp():
 
 #Lleva a la vista de editar usuario
 @app.route('/editUsers/<int:id>', methods=['GET', 'POST'])
-def editUsers(id):
+def editUsers(id): 
     users = ModelUser.edit(db, id)
     ListSup = ModelUser.ListSup(db)
     ListAdmin = ModelUser.ListAdmin(db)
@@ -273,9 +273,10 @@ def compciu(comp, ciu):
 def ShowUser(id):
     perfiles = ModelUser.perfil(db)
     listUser = ModelUser.user(db)
-    listCompCity = ModelUser.CompanyCity(db)
+    citys = ModelUser.listCity(db)
+    companys = ModelUser.listCompany(db)
     showUser = ModelUser.ShowUser(db, id)
-    return render_template('user/showUser.html', perfiles=perfiles, listUser=listUser, listCompCity=listCompCity, showUser=showUser)
+    return render_template('user/showUser.html', perfiles=perfiles, listUser=listUser, citys=citys, companys=companys, showUser=showUser)
 
 @app.route('/inactive/<int:id>', methods=['GET', 'POST'])
 def inactive(id):

@@ -64,27 +64,36 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>SUPERIOR: </th>
+                    <th>COMPANY: </th>
                     <td>
-                        {% for list in listUser %}
-                            {% if list.0 == user [6] %}
-                                {{list [2]}} {{list [3]}}
+                        {% for company in companys %}
+                            {% if company.0 == user [6] %}
+                                {{company [1]}}
                             {% endif %} 
                         {% endfor %}
                     </td>
                 </tr>
                 <tr>
-                    <th>COMPANY CITY: </th>
+                    <th>CITY: </th>
                     <td>
-                        {% for compCity in listCompCity %}
-                            {% if compCity.0 == user [7] %}
-                                {{compCity [1]}} {{compCity [2]}}
+                        {% for city in citys %}
+                            {% if city.0 == user [7] %}
+                                {{city [1]}} 
+                            {% endif %} 
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>SUPERIOR: </th>
+                    <td>
+                        {% for list in listUser %}
+                            {% if list.0 == user [8] %}
+                                {{list [2]}} {{list [3]}}
                             {% endif %} 
                         {% endfor %}
                     </td>
                 </tr>
             </table>
-
         {% endfor %}
 
         <div style="padding-top: 3%; padding-left: 47%;">
